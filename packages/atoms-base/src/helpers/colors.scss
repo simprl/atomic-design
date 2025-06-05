@@ -1,0 +1,9 @@
+@use "@atomic-design/design-tokens" as tokens;
+
+@mixin colors-classes {
+  @each $name, $colors in tokens.$color-map {
+    .color-#{$name} {
+      @content($colors);
+    }
+  }
+}

@@ -1,0 +1,204 @@
+$color-white: #fff !default;
+
+// Primary color (blue)
+$color-primary-50: #eff6ff !default;
+$color-primary-100: #dbeafe !default;
+$color-primary-200: #bfdbfe !default;
+$color-primary-300: #93c5fd !default;
+$color-primary-400: #60a5fa !default;
+$color-primary-500: #3b82f6 !default;
+$color-primary-600: #2563eb !default;
+$color-primary-700: #1d4ed8 !default;
+$color-primary-800: #1e40af !default;
+$color-primary-900: #1e3a8a !default;
+$color-primary-950: #172554 !default;
+$color-primary: $color-primary-500 !default;
+
+// Secondary color (neutral)
+$color-secondary-50: #f9fafb !default;
+$color-secondary-100: #f3f4f6 !default;
+$color-secondary-200: #e5e7eb !default;
+$color-secondary-300: #d1d5db !default;
+$color-secondary-400: #9ca3af !default;
+$color-secondary-500: #6b7280 !default;
+$color-secondary-600: #4b5563 !default;
+$color-secondary-700: #374151 !default;
+$color-secondary-800: #1f2937 !default;
+$color-secondary-900: #111827 !default;
+$color-secondary-950: #030712 !default;
+$color-secondary: $color-secondary-500 !default;
+
+// Accent color (vivid highlight)
+$color-accent-50: #fffbeb !default;
+$color-accent-100: #fef3c7 !default;
+$color-accent-200: #fde68a !default;
+$color-accent-300: #fcd34d !default;
+$color-accent-400: #fbbf24 !default;
+$color-accent-500: #f59e0b !default;
+$color-accent-600: #d97706 !default;
+$color-accent-700: #b45309 !default;
+$color-accent-800: #92400e !default;
+$color-accent-900: #78350f !default;
+$color-accent-950: #451a03 !default;
+$color-accent: $color-accent-500 !default;
+
+// Success color (green)
+$color-success-50: #ecfdf5 !default;
+$color-success-100: #d1fae5 !default;
+$color-success-200: #a7f3d0 !default;
+$color-success-300: #6ee7b7 !default;
+$color-success-400: #34d399 !default;
+$color-success-500: #10b981 !default;
+$color-success-600: #059669 !default;
+$color-success-700: #047857 !default;
+$color-success-800: #065f46 !default;
+$color-success-900: #064e3b !default;
+$color-success-950: #022c22 !default;
+$color-success: $color-success-500 !default;
+
+// Danger color (red)
+$color-danger-50: #fef2f2 !default;
+$color-danger-100: #fee2e2 !default;
+$color-danger-200: #fecaca !default;
+$color-danger-300: #fca5a5 !default;
+$color-danger-400: #f87171 !default;
+$color-danger-500: #ef4444 !default;
+$color-danger-600: #dc2626 !default;
+$color-danger-700: #b91c1c !default;
+$color-danger-800: #991b1b !default;
+$color-danger-900: #7f1d1d !default;
+$color-danger-950: #450a0a !default;
+$color-danger: $color-danger-500 !default;
+
+// Warning color (yellow)
+$color-warning-50: #fefce8 !default;
+$color-warning-100: #fef9c3 !default;
+$color-warning-200: #fef08a !default;
+$color-warning-300: #fde047 !default;
+$color-warning-400: #facc15 !default;
+$color-warning-500: #eab308 !default;
+$color-warning-600: #ca8a04 !default;
+$color-warning-700: #a16207 !default;
+$color-warning-800: #854d0e !default;
+$color-warning-900: #713f12 !default;
+$color-warning-950: #422006 !default;
+$color-warning: $color-warning-500 !default;
+
+// Info color (cyan)
+$color-info-50: #ecfeff !default;
+$color-info-100: #cffafe !default;
+$color-info-200: #a5f3fc !default;
+$color-info-300: #67e8f9 !default;
+$color-info-400: #22d3ee !default;
+$color-info-500: #06b6d4 !default;
+$color-info-600: #0891b2 !default;
+$color-info-700: #0e7490 !default;
+$color-info-800: #155e75 !default;
+$color-info-900: #164e63 !default;
+$color-info-950: #123947 !default;
+$color-info: $color-info-500 !default;
+
+// Colors map
+$color-map: (
+  primary: (
+    50:  $color-primary-50,
+    100: $color-primary-100,
+    200: $color-primary-200,
+    300: $color-primary-300,
+    400: $color-primary-400,
+    500: $color-primary-500,
+    600: $color-primary-600,
+    700: $color-primary-700,
+    800: $color-primary-800,
+    900: $color-primary-900,
+    950: $color-primary-950
+  ),
+  secondary: (
+    50:  $color-secondary-50,
+    100: $color-secondary-100,
+    200: $color-secondary-200,
+    300: $color-secondary-300,
+    400: $color-secondary-400,
+    500: $color-secondary-500,
+    600: $color-secondary-600,
+    700: $color-secondary-700,
+    800: $color-secondary-800,
+    900: $color-secondary-900,
+    950: $color-secondary-950
+  ),
+  accent: (
+    50:  $color-accent-50,
+    100: $color-accent-100,
+    200: $color-accent-200,
+    300: $color-accent-300,
+    400: $color-accent-400,
+    500: $color-accent-500,
+    600: $color-accent-600,
+    700: $color-accent-700,
+    800: $color-accent-800,
+    900: $color-accent-900,
+    950: $color-accent-950
+  ),
+  success: (
+    50:  $color-success-50,
+    100: $color-success-100,
+    200: $color-success-200,
+    300: $color-success-300,
+    400: $color-success-400,
+    500: $color-success-500,
+    600: $color-success-600,
+    700: $color-success-700,
+    800: $color-success-800,
+    900: $color-success-900,
+    950: $color-success-950
+  ),
+  danger: (
+    50:  $color-danger-50,
+    100: $color-danger-100,
+    200: $color-danger-200,
+    300: $color-danger-300,
+    400: $color-danger-400,
+    500: $color-danger-500,
+    600: $color-danger-600,
+    700: $color-danger-700,
+    800: $color-danger-800,
+    900: $color-danger-900,
+    950: $color-danger-950
+  ),
+  warning: (
+    50:  $color-warning-50,
+    100: $color-warning-100,
+    200: $color-warning-200,
+    300: $color-warning-300,
+    400: $color-warning-400,
+    500: $color-warning-500,
+    600: $color-warning-600,
+    700: $color-warning-700,
+    800: $color-warning-800,
+    900: $color-warning-900,
+    950: $color-warning-950
+  ),
+  info: (
+    50:  $color-info-50,
+    100: $color-info-100,
+    200: $color-info-200,
+    300: $color-info-300,
+    400: $color-info-400,
+    500: $color-info-500,
+    600: $color-info-600,
+    700: $color-info-700,
+    800: $color-info-800,
+    900: $color-info-900,
+    950: $color-info-950
+  )
+);
+
+// Derived colors
+$color-text: $color-secondary-900 !default;
+$color-background: $color-white !default;
+$color-border: $color-secondary-200 !default;
+
+// Inverse colors
+$color-text-inverse: $color-secondary-50 !default;
+$color-background-inverse: $color-secondary-900 !default;
+$color-border-inverse: $color-secondary-700 !default;

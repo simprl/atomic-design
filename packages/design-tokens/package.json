@@ -1,0 +1,38 @@
+{
+  "name": "@atomic-design/design-tokens",
+  "version": "0.1.2",
+  "description": "A minimal, semantic SCSS tokens library for atomic design systems—providing a standardized, override‑friendly set of color, spacing, typography, border, shadow, breakpoint, size and z‑index tokens to kickstart any project.",
+  "type": "module",
+  "files": [
+    "src/scss/",
+    "index.scss"
+  ],
+  "style": "index.scss",
+  "scripts": {
+    "build": "tsup",
+    "test": "",
+    "docs": "codools",
+    "lint": "stylelint src/scss/**/*.scss"
+  },
+  "author": "",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "codools": "^0.2.17",
+    "stylelint": "^16.18.0",
+    "stylelint-config-standard-scss": "^14.0.0",
+    "stylelint-scss": "^6.11.1"
+  },
+  "keywords": [
+    "design-tokens",
+    "scss",
+    "atomic-design",
+    "css-variables",
+    "css-tokens",
+    "tailwind-style",
+    "ui-kit",
+    "style-tokens",
+    "semantic-css",
+    "design-system"
+  ]
+}

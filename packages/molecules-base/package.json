@@ -1,0 +1,50 @@
+{
+  "name": "@atomic-design/molecules-base",
+  "version": "0.1.1",
+  "description": "",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "classnames": "^2.5.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@atomic-design/di": "*",
+    "@atomic-design/design-tokens": "*",
+    "@atomic-design/atoms-base": "*",
+    "@eslint/js": "^9.23.0",
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "codools": "^0.2.17",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.5",
+    "eslint-plugin-react": "^7.37.4",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.29.0",
+    "vite": "^6.2.4",
+    "vite-plugin-dts": "^4.5.3"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "scripts": {
+    "dev": "vike dev",
+    "build": "vike build",
+    "preview": "vike preview"
+  },
+  "dependencies": {
+    "vike": "^0.4.231",
+    "@vitejs/plugin-react": "^4.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "vike-react": "^0.6.4",
+    "@atomic-design/styles-base": "*",
+    "@atomic-design/atoms-base": "*",
+    "@atomic-design/molecules-base": "*",
+    "@atomic-design/di": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^6.2.6",
+    "@types/react": "^19.1.1",
+    "@types/react-dom": "^19.1.2"
+  },
+  "type": "module",
+  "private": true
+}
