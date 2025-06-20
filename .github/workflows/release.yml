@@ -70,7 +70,6 @@ jobs:
               - 'packages/atoms-base/**'
               - 'packages/molecules-base/**'
               - 'packages/example_nextjs/**'
-
       - name: di
         run: |
           if [ "${{ steps.filter.outputs.di }}" = "true" ]; then
