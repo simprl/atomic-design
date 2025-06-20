@@ -74,7 +74,7 @@ jobs:
         run: |
           if [ "${{ steps.filter.outputs.di }}" = "true" ]; then
             npm --workspace=packages/di run build
-#            npm --workspace=packages/di run test
+            # npm --workspace=packages/di run test
             npm --workspace=packages/di version patch --no-git-tag-version
           else
             npm --workspace=packages/di run build
@@ -86,7 +86,7 @@ jobs:
         run: |
           if [ "${{ steps.filter.outputs.designTokensSCSS }}" = "true" ]; then
             npm --workspace=packages/design-tokens run build
-#            npm --workspace=packages/design-tokens run test
+            # npm --workspace=packages/design-tokens run test
             npm --workspace=packages/design-tokens version patch --no-git-tag-version
           else
             npm --workspace=packages/design-tokens run build
@@ -100,7 +100,7 @@ jobs:
             npm --workspace=packages/styles-base install @atomic-design/di@$DI_VERSION
             npm --workspace=packages/styles-base install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
             npm --workspace=packages/styles-base run build
-#            npm --workspace=packages/styles-base run test
+            # npm --workspace=packages/styles-base run test
             npm --workspace=packages/styles-base version patch --no-git-tag-version
           else
             npm --workspace=packages/styles-base run build
@@ -115,7 +115,7 @@ jobs:
             npm --workspace=packages/atoms-base install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
             npm --workspace=packages/atoms-base install @atomic-design/styles-base@$STYLES_BASE_VERSION
             npm --workspace=packages/atoms-base run build
-#            npm --workspace=packages/atoms-base run test
+            # npm --workspace=packages/atoms-base run test
             npm --workspace=packages/atoms-base version patch --no-git-tag-version
           else
             npm --workspace=packages/atoms-base run build
@@ -131,7 +131,7 @@ jobs:
             npm --workspace=packages/molecules-base install @atomic-design/styles-base@$STYLES_BASE_VERSION
             npm --workspace=packages/molecules-base install @atomic-design/atoms-base@$ATOMS_BASE_VERSION
             npm --workspace=packages/molecules-base run build
-#            npm --workspace=packages/molecules-base run test
+            # npm --workspace=packages/molecules-base run test
             npm --workspace=packages/molecules-base version patch --no-git-tag-version
           else
             npm --workspace=packages/molecules-base run build
@@ -148,7 +148,7 @@ jobs:
             npm --workspace=packages/example_vike install @atomic-design/atoms-base@$ATOMS_BASE_VERSION
             npm --workspace=packages/example_vike install @atomic-design/molecules-base@$MOLECULES_BASE_VERSION
             npm --workspace=packages/example_vike run build
-#            npm --workspace=packages/example_vike run test
+            # npm --workspace=packages/example_vike run test
             npm --workspace=packages/example_vike version patch --no-git-tag-version
           else
             npm --workspace=packages/example_vike run build
@@ -165,7 +165,7 @@ jobs:
             npm --workspace=packages/example_nextjs install @atomic-design/atoms-base@$ATOMS_BASE_VERSION
             npm --workspace=packages/example_nextjs install @atomic-design/molecules-base@$MOLECULES_BASE_VERSION
             npm --workspace=packages/example_nextjs run build
-#            npm --workspace=packages/example_nextjs run test
+            # npm --workspace=packages/example_nextjs run test
             npm --workspace=packages/example_nextjs version patch --no-git-tag-version
           else
             npm --workspace=packages/example_nextjs run build
