@@ -9,7 +9,7 @@
   ],
   "style": "index.scss",
   "scripts": {
-    "build": "tsup",
+    "build": "",
     "test": "",
     "docs": "codools",
     "lint": "stylelint src/scss/**/*.scss"
