@@ -144,4 +144,3 @@ Please follow existing code conventions (TypeScript, React JSX, ESLint, Prettier
 ## License
 
 [MIT](LICENSE)
-
