@@ -24,6 +24,7 @@ If something is unclear or needs clarification, feel free to ask me.
   "scripts": {
     "build": "npm run build --workspaces",
     "docs": "npm run docs --workspaces",
+    "docsAllInOne": "codools --root . --output docs/code.md",
     "test": "npm run test --workspaces"
   },
   "type": "module",
@@ -34,7 +35,8 @@ If something is unclear or needs clarification, feel free to ask me.
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
-    "eslint": "^9.18.0"
+    "eslint": "^9.18.0",
+    "codools": "^0.2.17"
   }
 }
 

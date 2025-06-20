@@ -28,7 +28,7 @@ If something is unclear or needs clarification, feel free to ask me.
   "license": "MIT",
   "private": false,
   "devDependencies": {
-    "codools": "^0.2.15",
+    "codools": "^0.2.17",
     "stylelint": "^16.18.0",
     "stylelint-config-standard-scss": "^14.0.0",
     "stylelint-scss": "^6.11.1"

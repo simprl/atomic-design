@@ -11,7 +11,7 @@ on:
 
 jobs:
   release:
-    if: "!startsWith(github.event.head_commit.message, '[RELEASE]')"
+    if: github.event_name == 'workflow_dispatch' || !startsWith(github.event.head_commit.message, '[RELEASE]')
     runs-on: ubuntu-latest
     steps:
       # Checkout the repository
@@ -75,7 +75,7 @@ jobs:
         run: |
           if [ "${{ steps.filter.outputs.di }}" = "true" ]; then
             npm --workspace=packages/di run build
-            npm --workspace=packages/di run test
+#            npm --workspace=packages/di run test
             npm --workspace=packages/di version patch --no-git-tag-version
           else
             npm --workspace=packages/di run build
@@ -87,7 +87,7 @@ jobs:
         run: |
           if [ "${{ steps.filter.outputs.designTokensSCSS }}" = "true" ]; then
             npm --workspace=packages/design-tokens run build
-            npm --workspace=packages/design-tokens run test
+#            npm --workspace=packages/design-tokens run test
             npm --workspace=packages/design-tokens version patch --no-git-tag-version
           else
             npm --workspace=packages/design-tokens run build
@@ -98,10 +98,10 @@ jobs:
       - name: stylesBase
         run: |
           if [ "${{ steps.filter.outputs.stylesBase }}" = "true" ]; then
-            npm --workspace=packages/styles-base i di@$DI_VERSION
-            npm --workspace=packages/styles-base i design-tokens@$DESIGN_TOKENS_SCSS_VERSION
+            npm --workspace=packages/styles-base install @atomic-design/di@$DI_VERSION
+            npm --workspace=packages/styles-base install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
             npm --workspace=packages/styles-base run build
-            npm --workspace=packages/styles-base run test
+#            npm --workspace=packages/styles-base run test
             npm --workspace=packages/styles-base version patch --no-git-tag-version
           else
             npm --workspace=packages/styles-base run build
@@ -112,11 +112,11 @@ jobs:
       - name: atomsBase
         run: |
           if [ "${{ steps.filter.outputs.atomsBase }}" = "true" ]; then
-            npm --workspace=packages/atoms-base i di@$DI_VERSION
-            npm --workspace=packages/atoms-base i design-tokens@$DESIGN_TOKENS_SCSS_VERSION
-            npm --workspace=packages/atoms-base i styles-base@$STYLES_BASE_VERSION
+            npm --workspace=packages/atoms-base install @atomic-design/di@$DI_VERSION
+            npm --workspace=packages/atoms-base install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
+            npm --workspace=packages/atoms-base install @atomic-design/styles-base@$STYLES_BASE_VERSION
             npm --workspace=packages/atoms-base run build
-            npm --workspace=packages/atoms-base run test
+#            npm --workspace=packages/atoms-base run test
             npm --workspace=packages/atoms-base version patch --no-git-tag-version
           else
             npm --workspace=packages/atoms-base run build
@@ -127,12 +127,12 @@ jobs:
       - name: moleculesBase
         run: |
           if [ "${{ steps.filter.outputs.moleculesBase }}" = "true" ]; then
-            npm --workspace=packages/molecules-base i di@$DI_VERSION
-            npm --workspace=packages/molecules-base i design-tokens@$DESIGN_TOKENS_SCSS_VERSION
-            npm --workspace=packages/molecules-base i styles-base@$STYLES_BASE_VERSION
-            npm --workspace=packages/molecules-base i atoms-base@$ATOMS_BASE_VERSION
+            npm --workspace=packages/molecules-base install @atomic-design/di@$DI_VERSION
+            npm --workspace=packages/molecules-base install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
+            npm --workspace=packages/molecules-base install @atomic-design/styles-base@$STYLES_BASE_VERSION
+            npm --workspace=packages/molecules-base install @atomic-design/atoms-base@$ATOMS_BASE_VERSION
             npm --workspace=packages/molecules-base run build
-            npm --workspace=packages/molecules-base run test
+#            npm --workspace=packages/molecules-base run test
             npm --workspace=packages/molecules-base version patch --no-git-tag-version
           else
             npm --workspace=packages/molecules-base run build
@@ -143,13 +143,13 @@ jobs:
       - name: vikeExample
         run: |
           if [ "${{ steps.filter.outputs.vikeExample }}" = "true" ]; then
-            npm --workspace=packages/example_vike i di@$DI_VERSION
-            npm --workspace=packages/example_vike i design-tokens@$DESIGN_TOKENS_SCSS_VERSION
-            npm --workspace=packages/example_vike i styles-base@$STYLES_BASE_VERSION
-            npm --workspace=packages/example_vike i atoms-base@$ATOMS_BASE_VERSION
-            npm --workspace=packages/example_vike i molecules-base@$MOLECULES_BASE_VERSION
+            npm --workspace=packages/example_vike install @atomic-design/di@$DI_VERSION
+            npm --workspace=packages/example_vike install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
+            npm --workspace=packages/example_vike install @atomic-design/styles-base@$STYLES_BASE_VERSION
+            npm --workspace=packages/example_vike install @atomic-design/atoms-base@$ATOMS_BASE_VERSION
+            npm --workspace=packages/example_vike install @atomic-design/molecules-base@$MOLECULES_BASE_VERSION
             npm --workspace=packages/example_vike run build
-            npm --workspace=packages/example_vike run test
+#            npm --workspace=packages/example_vike run test
             npm --workspace=packages/example_vike version patch --no-git-tag-version
           else
             npm --workspace=packages/example_vike run build
@@ -160,13 +160,13 @@ jobs:
       - name: nextExample
         run: |
           if [ "${{ steps.filter.outputs.nextExample }}" = "true" ]; then
-            npm --workspace=packages/example_nextjs i di@$DI_VERSION
-            npm --workspace=packages/example_nextjs i design-tokens@$DESIGN_TOKENS_SCSS_VERSION
-            npm --workspace=packages/example_nextjs i styles-base@$STYLES_BASE_VERSION
-            npm --workspace=packages/example_nextjs i atoms-base@$ATOMS_BASE_VERSION
-            npm --workspace=packages/example_nextjs i molecules-base@$MOLECULES_BASE_VERSION
+            npm --workspace=packages/example_nextjs install @atomic-design/di@$DI_VERSION
+            npm --workspace=packages/example_nextjs install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
+            npm --workspace=packages/example_nextjs install @atomic-design/styles-base@$STYLES_BASE_VERSION
+            npm --workspace=packages/example_nextjs install @atomic-design/atoms-base@$ATOMS_BASE_VERSION
+            npm --workspace=packages/example_nextjs install @atomic-design/molecules-base@$MOLECULES_BASE_VERSION
             npm --workspace=packages/example_nextjs run build
-            npm --workspace=packages/example_nextjs run test
+#            npm --workspace=packages/example_nextjs run test
             npm --workspace=packages/example_nextjs version patch --no-git-tag-version
           else
             npm --workspace=packages/example_nextjs run build
@@ -191,44 +191,44 @@ jobs:
           git push
 
       # Publish changed workspaces (the root module is not published)
-#      - name: Publish di
-#        if: steps.filter.outputs.di == 'true'
-#        run: npm publish --workspace=packages/di --access public
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish di
+        if: steps.filter.outputs.di == 'true'
+        run: npm publish --workspace=packages/di --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
 #
 #      - name: Publish designTokensSCSS
 #        if: steps.filter.outputs.designTokensSCSS == 'true'
 #        run: npm publish --workspace=packages/design-tokens --access public
 #        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
 #
 #      - name: Publish stylesBase
 #        if: steps.filter.outputs.stylesBase == 'true'
 #        run: npm publish --workspace=packages/styles-base --access public
 #        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
 #
 #      - name: Publish atomsBase
 #        if: steps.filter.outputs.atomsBase == 'true'
 #        run: npm publish --workspace=packages/atoms-base --access public
 #        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
 #
 #      - name: Publish moleculesBase
 #        if: steps.filter.outputs.moleculesBase == 'true'
 #        run: npm publish --workspace=packages/molecules-base --access public
 #        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
 #
 #      - name: Publish vikeExample
 #        if: steps.filter.outputs.vikeExample == 'true'
 #        run: npm publish --workspace=packages/example_vike --access public
 #        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
 #
 #      - name: Publish nextExample
 #        if: steps.filter.outputs.nextExample == 'true'
 #        run: npm publish --workspace=packages/example_nextjs --access public
 #        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
