@@ -179,6 +179,14 @@ jobs:
 
       # Commit all changes in a single commit with a message containing the new version
       - name: Commit changes
+        if: > 
+          steps.filter.outputs.di == 'true' ||
+          steps.filter.outputs.designTokensSCSS == 'true' ||
+          steps.filter.outputs.stylesBase == 'true' ||
+          steps.filter.outputs.atomsBase == 'true' ||
+          steps.filter.outputs.moleculesBase == 'true' ||
+          steps.filter.outputs.vikeExample == 'true' ||
+          steps.filter.outputs.nextExample == 'true'
         run: |
           git config user.name "${{ secrets.GIT_USER_NAME }}"
           git config user.email "${{ secrets.GIT_USER_EMAIL }}"
