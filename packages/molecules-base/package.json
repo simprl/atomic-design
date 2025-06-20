@@ -1,6 +1,6 @@
 {
   "name": "@atomic-design/molecules-base",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "type": "module",
   "files": [
@@ -21,6 +21,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@atomic-design/styles-base": "^0.1.2",
     "@vitejs/plugin-react": "^4.3.4",
     "classnames": "^2.5.1",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -28,9 +29,9 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@atomic-design/di": "*",
-    "@atomic-design/design-tokens": "*",
-    "@atomic-design/atoms-base": "*",
+    "@atomic-design/atoms-base": "^0.1.2",
+    "@atomic-design/design-tokens": "^0.1.2",
+    "@atomic-design/di": "^0.1.2",
     "@eslint/js": "^9.23.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.12",

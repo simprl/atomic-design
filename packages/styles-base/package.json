@@ -1,6 +1,6 @@
 {
   "name": "@atomic-design/styles-base",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "type": "module",
   "files": [
@@ -26,7 +26,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@atomic-design/design-tokens": "*",
+    "@atomic-design/design-tokens": "^0.1.2",
     "@vite-plugin-vercel/vike": "^9.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "classnames": "^2.5.1",
@@ -36,7 +36,7 @@
     "react-markdown": "^10.1.0"
   },
   "devDependencies": {
-    "@atomic-design/di": "*",
+    "@atomic-design/di": "^0.1.2",
     "@eslint/js": "^9.23.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.12",

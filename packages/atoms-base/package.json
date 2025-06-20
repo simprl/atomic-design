@@ -1,6 +1,6 @@
 {
   "name": "@atomic-design/atoms-base",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "type": "module",
   "files": [
@@ -28,9 +28,9 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@atomic-design/di": "*",
-    "@atomic-design/design-tokens": "*",
-    "@atomic-design/styles-base": "*",
+    "@atomic-design/design-tokens": "^0.1.2",
+    "@atomic-design/di": "^0.1.2",
+    "@atomic-design/styles-base": "^0.1.2",
     "@eslint/js": "^9.23.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.12",
