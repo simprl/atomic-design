@@ -1,0 +1,13 @@
+@use "sass:meta";
+@use "sass:list";
+@use "../../../../node_modules/@atomic-design/design-tokens/index" as tokens;
+
+$export-types: ("number", "string", "color", "bool", null, "list");
+
+:export {
+  @each $name, $value in meta.module-variables(tokens) {
+    @if list.index($export-types, meta.type-of($value)) != null {
+      #{$name}: $value;
+    }
+  }
+}

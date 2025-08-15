@@ -2,9 +2,10 @@ import "./style.css";
 import logoUrl from "../assets/logo.svg";
 import { Link, AtomicProvider } from "~/components/atomic";
 import * as React from "react";
+import { AppWrapper } from "~/layouts/AppWrapper";
 
-export default function asLayoutDefault({ children }: { children: React.ReactNode }) {
-    return (
+export function LayoutDefault({ children }: { children: React.ReactNode }) {
+    return <AppWrapper>
         <div
             style={{
                 display: "flex",
@@ -14,17 +15,18 @@ export default function asLayoutDefault({ children }: { children: React.ReactNod
         >
             <Sidebar>
                 <Logo/>
-                    <AtomicProvider space="contextName" variant="v1">
+
                         <Link href="/">Welcome</Link>
                         <Link color="Success" href="/todo">Todo</Link>
+                        <Link href="/design-tokens">Design Tokens</Link>
                         <AtomicProvider space="contextName" variant="v2">
                             <Link href="/star-wars">Data Fetching</Link>
                         </AtomicProvider>
-                    </AtomicProvider>
+
             </Sidebar>
             <Content>{children}</Content>
         </div>
-    );
+    </AppWrapper>;
 }
 
 function Sidebar({ children }: { children: React.ReactNode }) {

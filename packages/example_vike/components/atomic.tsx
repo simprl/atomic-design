@@ -3,4 +3,5 @@ import { getServerReadyComponent, AtomicProvider } from "~/components/atomicCont
 
 export { AtomicProvider };
 export const Link = getServerReadyComponent("molecules", "Link");
-
+export const SpaceForm = getServerReadyComponent("storeComponents", "SpaceForm");
+export const ValueProvider = getServerReadyComponent("storeComponents", "ValueProvider");

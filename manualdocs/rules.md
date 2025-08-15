@@ -1,6 +1,6 @@
 # What Is This Library About
 
-* First of all, it’s about interfaces, not implementations.
+* First, it’s about interfaces, not implementations.
 * It’s about splitting the application into multiple layers.
 * It’s about making layer replacement easy.
 * It’s about Dependency Inversion.
@@ -31,12 +31,14 @@
 
 ## Responsibility
 
+* Framework-specific and environment-specific logic.
+* Define many variants for render atoms. It means use Input atom to create NumberInput, TextInput, MoneyInput molecules.
 * Molecules should be responsible for calculating props for atoms.
 * Molecules should not perform calculations themselves. They simply compose functions, hooks, and one or more atoms.
 * Molecules call functions and hooks that return props, then forward those props into atoms.
 
 ## Dependency Inversion
-Molecules use functions and hooks that can be swapped out. 
+Molecules use functions and hooks that can be swapped out.
 For example, there are different functions to compute the current link in Next.js versus Vike. We can inject the appropriate helper for each environment.
 
 # Cell
@@ -45,18 +47,25 @@ For example, there are different functions to compute the current link in Next.j
 * Cells are responsible for connecting the UI to data (for example, Redux).
 * Cells are similar to containers in Redux.
 
-# Organ
+# Section
 
 ## Responsibility
 
-* An Organ composes multiple Cells.
+* An Section composes multiple Cells.
 * Responsible for injecting dependencies.
 
-# Organism
+# Form
 
 ## Responsibility
 
-* Responsible for placing page Organs into the page layout and running the Page Ghost.
+* A Form composes multiple Sections to view or edit someone entity.
+* It also usually runs specific Ghost for the form.
+
+# Page
+
+## Responsibility
+
+* Responsible for placing page sections and forms into the page layout and running the Page Ghost.
 
 # Ghosts
 

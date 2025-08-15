@@ -26,18 +26,30 @@ export function createVariantsContext <
     variantManager.setDepsHook(() => useAtomic());
 
     const AtomicProvider = ({children, variants, space, variant }: AtomicProviderProps<(typeof initVariants)["variants"]>) => {
-        const parent = useContext(reactContext);
-        const value = useMemo(async () => {
-            const parentVariants = parent.variants;
-            const newVariants = mergeVariants(parentVariants, variants, space, variant);
-            const newContext = await variantManager.getVariant(newVariants);
-            return { variants: newVariants, context: newContext };
-        }, [parent, variants, space, variant]);
-        const v = use(value);
+        const { variants: parentVariants } = useContext(reactContext);
+        const newVariants = useMemo(
+            () => mergeVariants(parentVariants, variants, space, variant),
+            [parentVariants, space, variant, variants]
+        );
+        const newContextPromise = useMemo(async () => {
+            try {
+                return await variantManager.getVariant(newVariants);
+            } catch (e) {
+                console.error(e);
+                throw e;
+            }
+        }, [ newVariants ]);
+        const newContext = use(newContextPromise);
+        const v = useMemo(
+            () => ({ variants: newVariants, context: newContext }),
+            [newVariants, newContext]
+        );
         return <Provider value={v} >{children}</Provider>
     }
 
-    const SuspenseProvider: typeof AtomicProvider = (props) => <Suspense><AtomicProvider {...props}/></Suspense>
+    const SuspenseProvider: typeof AtomicProvider = (props) => <Suspense fallback={null}>
+        <AtomicProvider {...props}/>
+    </Suspense>;
 
     type ComponentKeys<Space extends keyof Ctx> =
         {
@@ -112,7 +124,14 @@ function createVariantsManager <
 >(context: {[SpaceName in keyof Ctx]: () => WrappedPromise<Ctx[SpaceName], Ctx>}, variantsBySpace: V) {
     let useContextHook: () => Ctx;
     const useContext = () => useContextHook();
+    const loadedVariants = new Map<string, Ctx>();
+
     const getVariant = async (selectedVariants: {[SpaceName in keyof Ctx]?: keyof V[SpaceName]}) => {
+        const hash = getVariantsHash(selectedVariants);
+        let loadedVariant = loadedVariants.get(hash);
+        if (loadedVariant) {
+            return loadedVariant;
+        }
         const promises = Object.entries(context).map(
             async ([spaceName, spaceValue]: [keyof Ctx, () => WrappedPromise<Ctx[keyof Ctx], Ctx>]) => {
                 const selectedVariant = selectedVariants[spaceName] as string;
@@ -133,7 +152,9 @@ function createVariantsManager <
             }
         );
         const entries = await Promise.all(promises);
-        return Object.fromEntries(entries) as Ctx;
+        loadedVariant = Object.fromEntries(entries) as Ctx;
+        loadedVariants.set(hash, loadedVariant)
+        return loadedVariant;
     }
     const getInitVariants = () => throwingObj as {
         variants: {[SpaceName in keyof Ctx]?: keyof V[SpaceName]};
@@ -148,4 +169,11 @@ function createVariantsManager <
         getInitVariants,
         setDepsHook,
     }
+}
+
+function getVariantsHash (variants: Record<string, string | number | symbol | undefined>) {
+    return Object.entries(variants)
+        .filter(([, value]) => value !== undefined)
+        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+        .map(([key, value]) => `${key}=${String(value)}`).join("&");
 }

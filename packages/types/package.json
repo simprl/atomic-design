@@ -1,0 +1,40 @@
+{
+  "name": "@atomic-design/types",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": {
+      "types": "./dist/styles.d.ts"
+    },
+    "./atoms": {
+      "types": "./dist/atoms.d.ts"
+    },
+    "./molecules": {
+      "types": "./dist/molecules.d.ts"
+    },
+    "./moleculesHooks": {
+      "types": "./dist/moleculesHooks.d.ts"
+    },
+    "./store": {
+      "types": "./dist/store.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "install_and_build": "npm i && npm run build",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@atomic-design/di": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}

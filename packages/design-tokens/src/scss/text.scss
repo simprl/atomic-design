@@ -1,128 +1,128 @@
 // Typography tokens (Font size, Line height, Font weight, Letter spacing)
 
 // Titles
-$text-title1-font-size: 48px !default;
-$text-title1-line-height: 1.167 !default; // 56px / 48px
-$text-title1-font-weight: 700 !default;
-$text-title1-letter-spacing: -0.05em !default; // Tailwind 'tighter'
+$fontSize-title-1:      48px !default;
+$lineHeight-title-1:    1.167 !default; // 56px / 48px
+$fontWeight-title-1:    700 !default;
+$letterSpacing-title-1: -0.05em !default; // Tailwind 'tighter'
 
-$text-title2-font-size: 36px !default;
-$text-title2-line-height: 1.222 !default; // 44px / 36px
-$text-title2-font-weight: 700 !default;
-$text-title2-letter-spacing: -0.025em !default; // Tailwind 'tight'
+$fontSize-title-2:      36px !default;
+$lineHeight-title-2:    1.222 !default; // 44px / 36px
+$fontWeight-title-2:    700 !default;
+$letterSpacing-title-2: -0.025em !default; // Tailwind 'tight'
 
-$text-title3-font-size: 30px !default;
-$text-title3-line-height: 1.200 !default; // 36px / 30px
-$text-title3-font-weight: 600 !default;
-$text-title3-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-title-3:      30px !default;
+$lineHeight-title-3:    1.200 !default; // 36px / 30px
+$fontWeight-title-3:    600 !default;
+$letterSpacing-title-3: 0em !default;    // Tailwind 'normal'
 
 // Subtitles
-$text-subtitle1-font-size: 24px !default;
-$text-subtitle1-line-height: 1.333 !default; // 32px / 24px
-$text-subtitle1-font-weight: 600 !default;
-$text-subtitle1-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-subtitle-1:      24px !default;
+$lineHeight-subtitle-1:    1.333 !default; // 32px / 24px
+$fontWeight-subtitle-1:    600 !default;
+$letterSpacing-subtitle-1: 0em !default;   // Tailwind 'normal'
 
-$text-subtitle2-font-size: 20px !default;
-$text-subtitle2-line-height: 1.400 !default; // 28px / 20px
-$text-subtitle2-font-weight: 500 !default;
-$text-subtitle2-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-subtitle-2:      20px !default;
+$lineHeight-subtitle-2:    1.400 !default; // 28px / 20px
+$fontWeight-subtitle-2:    500 !default;
+$letterSpacing-subtitle-2: 0em !default;   // Tailwind 'normal'
 
 // Body text
-$text-body1-font-size: 16px !default;
-$text-body1-line-height: 1.500 !default; // 24px / 16px
-$text-body1-font-weight: 400 !default;
-$text-body1-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-body-1:      16px !default;
+$lineHeight-body-1:    1.500 !default; // 24px / 16px
+$fontWeight-body-1:    400 !default;
+$letterSpacing-body-1: 0em !default;   // Tailwind 'normal'
 
-$text-body2-font-size: 14px !default;
-$text-body2-line-height: 1.429 !default; // 20px / 14px
-$text-body2-font-weight: 400 !default;
-$text-body2-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-body-2:      14px !default;
+$lineHeight-body-2:    1.429 !default; // 20px / 14px
+$fontWeight-body-2:    400 !default;
+$letterSpacing-body-2: 0em !default;   // Tailwind 'normal'
 
 // Captions
-$text-caption1-font-size: 12px !default;
-$text-caption1-line-height: 1.333 !default; // 16px / 12px
-$text-caption1-font-weight: 400 !default;
-$text-caption1-letter-spacing: 0.025em !default; // Tailwind 'wide'
+$fontSize-caption-1:      12px !default;
+$lineHeight-caption-1:    1.333 !default; // 16px / 12px
+$fontWeight-caption-1:    400 !default;
+$letterSpacing-caption-1: 0.025em !default; // Tailwind 'wide'
 
-$text-caption2-font-size: 10px !default;
-$text-caption2-line-height: 1.400 !default; // 14px / 10px
-$text-caption2-font-weight: 400 !default;
-$text-caption2-letter-spacing: 0.05em !default; // Tailwind 'wider'
+$fontSize-caption-2:      10px !default;
+$lineHeight-caption-2:    1.400 !default; // 14px / 10px
+$fontWeight-caption-2:    400 !default;
+$letterSpacing-caption-2: 0.05em !default;  // Tailwind 'wider'
 
 // Overline
-$text-overline-font-size: 10px !default;
-$text-overline-line-height: 1.600 !default; // 16px / 10px
-$text-overline-font-weight: 500 !default; // typically semi-bold
-$text-overline-letter-spacing: 0.1em !default; // Tailwind 'widest'
+$fontSize-overline:      10px !default;
+$lineHeight-overline:    1.600 !default; // 16px / 10px
+$fontWeight-overline:    500 !default;   // typically semi-bold
+$letterSpacing-overline: 0.1em !default; // Tailwind 'widest'
 
 // Mixins for typographic styles
 @mixin title1 {
-  font-size: $text-title1-font-size;
-  font-weight: $text-title1-font-weight;
-  line-height: $text-title1-line-height;
-  letter-spacing: $text-title1-letter-spacing;
+  font-size:      $fontSize-title-1;
+  font-weight:    $fontWeight-title-1;
+  line-height:    $lineHeight-title-1;
+  letter-spacing: $letterSpacing-title-1;
 }
 
 @mixin title2 {
-  font-size: $text-title2-font-size;
-  font-weight: $text-title2-font-weight;
-  line-height: $text-title2-line-height;
-  letter-spacing: $text-title2-letter-spacing;
+  font-size:      $fontSize-title-2;
+  font-weight:    $fontWeight-title-2;
+  line-height:    $lineHeight-title-2;
+  letter-spacing: $letterSpacing-title-2;
 }
 
 @mixin title3 {
-  font-size: $text-title3-font-size;
-  font-weight: $text-title3-font-weight;
-  line-height: $text-title3-line-height;
-  letter-spacing: $text-title3-letter-spacing;
+  font-size:      $fontSize-title-3;
+  font-weight:    $fontWeight-title-3;
+  line-height:    $lineHeight-title-3;
+  letter-spacing: $letterSpacing-title-3;
 }
 
 @mixin subtitle1 {
-  font-size: $text-subtitle1-font-size;
-  font-weight: $text-subtitle1-font-weight;
-  line-height: $text-subtitle1-line-height;
-  letter-spacing: $text-subtitle1-letter-spacing;
+  font-size:      $fontSize-subtitle-1;
+  font-weight:    $fontWeight-subtitle-1;
+  line-height:    $lineHeight-subtitle-1;
+  letter-spacing: $letterSpacing-subtitle-1;
 }
 
 @mixin subtitle2 {
-  font-size: $text-subtitle2-font-size;
-  font-weight: $text-subtitle2-font-weight;
-  line-height: $text-subtitle2-line-height;
-  letter-spacing: $text-subtitle2-letter-spacing;
+  font-size:      $fontSize-subtitle-2;
+  font-weight:    $fontWeight-subtitle-2;
+  line-height:    $lineHeight-subtitle-2;
+  letter-spacing: $letterSpacing-subtitle-2;
 }
 
 @mixin body1 {
-  font-size: $text-body1-font-size;
-  font-weight: $text-body1-font-weight;
-  line-height: $text-body1-line-height;
-  letter-spacing: $text-body1-letter-spacing;
+  font-size:      $fontSize-body-1;
+  font-weight:    $fontWeight-body-1;
+  line-height:    $lineHeight-body-1;
+  letter-spacing: $letterSpacing-body-1;
 }
 
 @mixin body2 {
-  font-size: $text-body2-font-size;
-  font-weight: $text-body2-font-weight;
-  line-height: $text-body2-line-height;
-  letter-spacing: $text-body2-letter-spacing;
+  font-size:      $fontSize-body-2;
+  font-weight:    $fontWeight-body-2;
+  line-height:    $lineHeight-body-2;
+  letter-spacing: $letterSpacing-body-2;
 }
 
 @mixin caption1 {
-  font-size: $text-caption1-font-size;
-  font-weight: $text-caption1-font-weight;
-  line-height: $text-caption1-line-height;
-  letter-spacing: $text-caption1-letter-spacing;
+  font-size:      $fontSize-caption-1;
+  font-weight:    $fontWeight-caption-1;
+  line-height:    $lineHeight-caption-1;
+  letter-spacing: $letterSpacing-caption-1;
 }
 
 @mixin caption2 {
-  font-size: $text-caption2-font-size;
-  font-weight: $text-caption2-font-weight;
-  line-height: $text-caption2-line-height;
-  letter-spacing: $text-caption2-letter-spacing;
+  font-size:      $fontSize-caption-2;
+  font-weight:    $fontWeight-caption-2;
+  line-height:    $lineHeight-caption-2;
+  letter-spacing: $letterSpacing-caption-2;
 }
 
 @mixin overline {
-  font-size: $text-overline-font-size;
-  font-weight: $text-overline-font-weight;
-  line-height: $text-overline-line-height;
-  letter-spacing: $text-overline-letter-spacing;
+  font-size:      $fontSize-overline;
+  font-weight:    $fontWeight-overline;
+  line-height:    $lineHeight-overline;
+  letter-spacing: $letterSpacing-overline;
   text-transform: uppercase;
 }

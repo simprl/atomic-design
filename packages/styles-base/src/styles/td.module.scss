@@ -1,0 +1,8 @@
+@use "~/helpers" as helpers;
+@use "sass:map";
+
+.td {
+  @include helpers.colors-classes() using($colors) {
+    /* */
+  }
+}

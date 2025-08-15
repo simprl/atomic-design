@@ -1,0 +1,6 @@
+@use "@atomic-design/design-tokens" as tokens;
+
+.container {
+  width: tokens.$fontSize-subtitle-1;
+  height: tokens.$fontSize-subtitle-1;
+}

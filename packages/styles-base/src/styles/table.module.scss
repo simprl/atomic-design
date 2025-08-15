@@ -1,0 +1,11 @@
+@use "~/helpers" as helpers;
+@use "sass:map";
+
+.table {
+  .sizeSmall, .sizeMedium, .sizeLarge {
+    /* */
+  }
+  @include helpers.colors-classes() using($colors) {
+    /* */
+  }
+}

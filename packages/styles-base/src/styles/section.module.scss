@@ -1,0 +1,13 @@
+@use "@atomic-design/design-tokens" as tokens;
+@use "../helpers" as helpers;
+@use "sass:map";
+
+.container {
+  .icon, .caption, .subcaption, .content, .sizeSmall, .sizeMedium, .sizeLarge {
+    /* */
+  }
+
+  @include helpers.colors-classes() using($colors) {
+    color: map.get($colors, 500);
+  }
+}

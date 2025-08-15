@@ -1,0 +1,15 @@
+@use "@atomic-design/design-tokens" as tokens;
+@use "../helpers" as helpers;
+@use "sass:map";
+
+.container {
+  .thumbnail, .before, .content, .after, .sizeSmall, .sizeMedium, .sizeLarge {
+    /* */
+  }
+
+  border: solid tokens.$border-md;
+  border-radius: tokens.$radius-md;
+  @include helpers.colors-classes() using($colors) {
+    border-color: map.get($colors, 500);
+  }
+}

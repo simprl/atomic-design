@@ -1,10 +1,9 @@
 import type { WithDeps } from "@atomic-design/di";
-import type { ButtonStyles } from "@atomic-design/styles-base";
-import type { ButtonAtomProps } from "~/types";
 import { classNameByColor, classNameByInteractive } from "~/helpers/classname";
 import { useState } from "react";
+import type { Atoms, Styles } from "@atomic-design/types";
 
-export function Button(props: ButtonAtomProps & WithDeps<ButtonStyles>) {
+export function Button(props: Atoms.AtomProps<"Button"> & WithDeps<Styles.StyleContext<"button">>) {
     const { children, icon, before, after, color = "Primary", deps } = props;
     const classNames = deps.styles.button;
     const containerClassNames = [
@@ -20,5 +19,3 @@ export function Button(props: ButtonAtomProps & WithDeps<ButtonStyles>) {
         {after && <div className={classNames.after}>{after}</div>}
     </button>
 }
-
-Button.contextProp = true;

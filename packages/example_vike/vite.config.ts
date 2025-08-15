@@ -13,4 +13,14 @@ export default defineConfig({
       "~": resolve(__dirname, "./"),
     },
   },
+  css: {
+    modules: {
+      exportGlobals: true,
+    },
+    preprocessorOptions: {
+      scss: {
+        api: "modern",
+      },
+    },
+  },
 });

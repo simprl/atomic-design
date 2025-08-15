@@ -10,16 +10,17 @@ If something is unclear or needs clarification, feel free to ask me.
 ```json
 {
   "name": "@atomic-design/design-tokens",
-  "version": "0.1.1",
-  "description": "",
+  "version": "0.1.2",
+  "description": "A minimal, semantic SCSS tokens library for atomic design systems—providing a standardized, override‑friendly set of color, spacing, typography, border, shadow, breakpoint, size and z‑index tokens to kickstart any project.",
   "type": "module",
   "files": [
-    "src/scss/"
+    "src/scss/",
+    "index.scss"
   ],
-  "style": "src/scss/index.scss",
-  "sass": "src/scss/index.scss",
+  "style": "index.scss",
   "scripts": {
-    "build": "tsup",
+    "install_and_build": "npm i && npm run build",
+    "build": "",
     "test": "",
     "docs": "codools",
     "lint": "stylelint src/scss/**/*.scss"
@@ -33,8 +34,26 @@ If something is unclear or needs clarification, feel free to ask me.
     "stylelint-config-standard-scss": "^14.0.0",
     "stylelint-scss": "^6.11.1"
   },
-  "keywords": []
+  "keywords": [
+    "design-tokens",
+    "scss",
+    "atomic-design",
+    "css-variables",
+    "css-tokens",
+    "tailwind-style",
+    "ui-kit",
+    "style-tokens",
+    "semantic-css",
+    "design-system"
+  ]
 }
+
+```
+
+## index.scss
+
+```scss
+@forward "src/scss";
 
 ```
 
@@ -170,6 +189,101 @@ $color-info-900: #164e63 !default;
 $color-info-950: #123947 !default;
 $color-info: $color-info-500 !default;
 
+// Colors map
+$color-map: (
+  primary: (
+    50:  $color-primary-50,
+    100: $color-primary-100,
+    200: $color-primary-200,
+    300: $color-primary-300,
+    400: $color-primary-400,
+    500: $color-primary-500,
+    600: $color-primary-600,
+    700: $color-primary-700,
+    800: $color-primary-800,
+    900: $color-primary-900,
+    950: $color-primary-950
+  ),
+  secondary: (
+    50:  $color-secondary-50,
+    100: $color-secondary-100,
+    200: $color-secondary-200,
+    300: $color-secondary-300,
+    400: $color-secondary-400,
+    500: $color-secondary-500,
+    600: $color-secondary-600,
+    700: $color-secondary-700,
+    800: $color-secondary-800,
+    900: $color-secondary-900,
+    950: $color-secondary-950
+  ),
+  accent: (
+    50:  $color-accent-50,
+    100: $color-accent-100,
+    200: $color-accent-200,
+    300: $color-accent-300,
+    400: $color-accent-400,
+    500: $color-accent-500,
+    600: $color-accent-600,
+    700: $color-accent-700,
+    800: $color-accent-800,
+    900: $color-accent-900,
+    950: $color-accent-950
+  ),
+  success: (
+    50:  $color-success-50,
+    100: $color-success-100,
+    200: $color-success-200,
+    300: $color-success-300,
+    400: $color-success-400,
+    500: $color-success-500,
+    600: $color-success-600,
+    700: $color-success-700,
+    800: $color-success-800,
+    900: $color-success-900,
+    950: $color-success-950
+  ),
+  danger: (
+    50:  $color-danger-50,
+    100: $color-danger-100,
+    200: $color-danger-200,
+    300: $color-danger-300,
+    400: $color-danger-400,
+    500: $color-danger-500,
+    600: $color-danger-600,
+    700: $color-danger-700,
+    800: $color-danger-800,
+    900: $color-danger-900,
+    950: $color-danger-950
+  ),
+  warning: (
+    50:  $color-warning-50,
+    100: $color-warning-100,
+    200: $color-warning-200,
+    300: $color-warning-300,
+    400: $color-warning-400,
+    500: $color-warning-500,
+    600: $color-warning-600,
+    700: $color-warning-700,
+    800: $color-warning-800,
+    900: $color-warning-900,
+    950: $color-warning-950
+  ),
+  info: (
+    50:  $color-info-50,
+    100: $color-info-100,
+    200: $color-info-200,
+    300: $color-info-300,
+    400: $color-info-400,
+    500: $color-info-500,
+    600: $color-info-600,
+    700: $color-info-700,
+    800: $color-info-800,
+    900: $color-info-900,
+    950: $color-info-950
+  )
+);
+
 // Derived colors
 $color-text: $color-secondary-900 !default;
 $color-background: $color-white !default;
@@ -199,11 +313,11 @@ $color-border-inverse: $color-secondary-700 !default;
 ## src/scss/shadow.scss
 
 ```scss
-$shadow-xs: 0 1px 2px rgba(0 0 0 5%) !default;
-$shadow-sm: 0 1px 3px rgba(0 0 0 10%), 0 1px 2px rgba(0 0 0 6%) !default;
-$shadow-md: 0 4px 6px rgba(0 0 0 10%), 0 2px 4px rgba(0 0 0 6%) !default;
-$shadow-lg: 0 10px 15px rgba(0 0 0 10%), 0 4px 6px rgba(0 0 0 5%) !default;
-$shadow-xl: 0 20px 25px rgba(0 0 0 10%), 0 10px 10px rgba(0 0 0 4%) !default;
+$shadow-xs: 0 1px 2px rgba(0 0 0 / 5%) !default;
+$shadow-sm: 0 1px 3px rgba(0 0 0 / 10%), 0 1px 2px rgba(0 0 0 / 6%) !default;
+$shadow-md: 0 4px 6px rgba(0 0 0 / 10%), 0 2px 4px rgba(0 0 0 / 6%) !default;
+$shadow-lg: 0 10px 15px rgba(0 0 0 / 10%), 0 4px 6px rgba(0 0 0 / 5%) !default;
+$shadow-xl: 0 20px 25px rgba(0 0 0 / 10%), 0 10px 10px rgba(0 0 0 / 4%) !default;
 
 ```
 

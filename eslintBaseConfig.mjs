@@ -2,6 +2,7 @@ import globals from "globals";
 import tsParser from "@typescript-eslint/parser";
 import js from "@eslint/js";
 import { FlatCompat } from "@eslint/eslintrc";
+import expectType from "eslint-plugin-expect-type/configs/recommended";
 
 export const getBaseConfig = (dirname) => {
     const compat = new FlatCompat({
@@ -10,6 +11,7 @@ export const getBaseConfig = (dirname) => {
         allConfig: js.configs.all
     });
     return [
+        expectType,
         ...compat.extends("eslint:recommended", "plugin:@typescript-eslint/recommended"),
         {
             ignores: ["*", "!src/**"],
@@ -32,7 +34,15 @@ export const getBaseConfig = (dirname) => {
                 },
             },
 
-            rules: {},
+            rules: {
+            },
+        },
+        {
+            "files": ['**/*.test-d.ts'],
+            rules: {
+                "@typescript-eslint/no-unused-vars": "off",
+                "@typescript-eslint/no-unused-expressions": "off"
+            },
         },
         {
             "files": ["tests/**/*"],

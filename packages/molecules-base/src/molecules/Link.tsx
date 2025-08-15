@@ -1,13 +1,10 @@
-import { WithDeps } from "@atomic-design/di";
-import { LinkAtomContext } from "@atomic-design/atoms-base";
-import { LinkMoleculeProps, UseIsActiveLinkContext } from "~/types";
+import type { WithDeps } from "@atomic-design/di";
 import { memo } from "react";
+import type { Molecules, MoleculesHooks, Atoms } from "@atomic-design/types";
 
-export const Link = memo(function(props: LinkMoleculeProps & WithDeps<UseIsActiveLinkContext & LinkAtomContext>) {
+export const Link = memo(function Link(props: Molecules.MoleculeProps<"Link"> & WithDeps<Atoms.AtomContext<"Link"> & MoleculesHooks.MoleculeHooksContext<"useLinkProps">>) {
     const { href, deps, active, ...otherProps } = props;
-    const { atoms: { Link }, moleculesHelpers: { useIsActiveLink } } = deps;
-    const isActive = useIsActiveLink(href);
-    return <Link {...otherProps} href={href} active={active !== undefined ? active : isActive} />
+    const { atoms: { Link }, moleculesHooks: { useLinkProps } } = deps;
+    const linkProps = useLinkProps(href);
+    return <Link {...otherProps} {...linkProps} />
 });
-
-Link.displayName = "LinkMolecule";

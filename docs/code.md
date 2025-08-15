@@ -14,18 +14,20 @@ If something is unclear or needs clarification, feel free to ask me.
   "private": true,
   "workspaces": [
     "packages/di",
+    "packages/types",
     "packages/design-tokens",
     "packages/styles-base",
     "packages/atoms-base",
     "packages/molecules-base",
-    "packages/example_vike",
-    "packages/example_nextjs"
+    "packages/store-react-context",
+    "packages/example_vike"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "docs": "npm run docs --workspaces",
+    "install_and_build": "npm run install_and_build --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "docs": "npm run docs --workspaces --if-present",
     "docsAllInOne": "codools --root . --output docs/code.md",
-    "test": "npm run test --workspaces"
+    "test": "npm run test --workspaces --if-present"
   },
   "type": "module",
   "keywords": [],
@@ -35,8 +37,10 @@ If something is unclear or needs clarification, feel free to ask me.
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.21.0",
     "@typescript-eslint/parser": "^8.21.0",
-    "eslint": "^9.18.0",
-    "codools": "^0.2.17"
+    "@eslint/js": "^9.23.0",
+    "globals": "^16.0.0",
+    "codools": "^0.2.17",
+    "eslint": "^9.18.0"
   }
 }
 
@@ -57,49 +61,46 @@ If something is unclear or needs clarification, feel free to ask me.
   "version": "0.1.1",
   "description": "",
   "type": "module",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist", "index.scss", "src/helpers"],
   "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
   },
+  "sideEffects": false,
   "scripts": {
-    "dev": "vite dev",
+    "install_and_build": "npm i && npm run build",
     "build": "vite build",
-    "preview": "vite preview",
+    "test": "tsc --project tsconfig.test.json",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "classnames": "^2.5.1",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "@atomic-design/di": "*",
+    "@atomic-design/types": "*",
+    "@atomic-design/design-tokens": "*"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@atomic-design/di": "*",
-    "@atomic-design/design-tokens": "*",
-    "@atomic-design/styles-base": "*",
-    "@eslint/js": "^9.23.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
     "codools": "^0.2.17",
-    "eslint": "^9.23.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-prettier": "^5.2.5",
-    "eslint-plugin-react": "^7.37.4",
-    "globals": "^16.0.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0",
-    "vite": "^6.2.4",
-    "vite-plugin-dts": "^4.5.3"
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   }
 }
 
@@ -109,12 +110,11 @@ If something is unclear or needs clarification, feel free to ask me.
 
 ```typescript
 import type { WithDeps } from "@atomic-design/di";
-import type { ButtonStyles } from "@atomic-design/styles-base";
-import type { ButtonAtomProps } from "~/types";
 import { classNameByColor, classNameByInteractive } from "~/helpers/classname";
 import { useState } from "react";
+import type { Atoms, Styles } from "@atomic-design/types";
 
-export function Button(props: ButtonAtomProps & WithDeps<ButtonStyles>) {
+export function Button(props: Atoms.AtomProps<"Button"> & WithDeps<Styles.StyleContext<"button">>) {
     const { children, icon, before, after, color = "Primary", deps } = props;
     const classNames = deps.styles.button;
     const containerClassNames = [
@@ -131,19 +131,55 @@ export function Button(props: ButtonAtomProps & WithDeps<ButtonStyles>) {
     </button>
 }
 
-Button.contextProp = true;
+```
+
+## packages/atoms-base/src/atoms/Card.tsx
+
+```typescript
+import type { WithDeps } from '@atomic-design/di';
+import type { Atoms, Styles } from '@atomic-design/types';
+
+export function Card(props: Atoms.AtomProps<"Card"> & WithDeps<Styles.StyleContext<"card">>) {
+    const { thumbnail, before, after, children, deps } = props;
+    const styles = deps.styles.card;
+
+    return (
+        <div className={styles.container}>
+            {thumbnail && <div className={styles.thumbnail}>{thumbnail}</div>}
+            {before && <div className={styles.before}>{before}</div>}
+            {children && <div className={styles.content}>{children}</div>}
+            {after && <div className={styles.after}>{after}</div>}
+        </div>
+    );
+}
+
+```
+
+## packages/atoms-base/src/atoms/Color.tsx
+
+```typescript
+import type { WithDeps } from "@atomic-design/di";
+import type { Atoms, Styles } from "@atomic-design/types";
+
+export function Color (props: Atoms.AtomProps<"Color"> & WithDeps<Styles.StyleContext<"color">>) {
+    const { children, color, deps } = props;
+    return (
+        <div title={color} style={{ background: color }} className={deps.styles.color.container}>
+            {children}
+        </div>
+    );
+}
 
 ```
 
 ## packages/atoms-base/src/atoms/Link.tsx
 
 ```typescript
-import { WithDeps } from "@atomic-design/di";
-import { LinkStyles } from "@atomic-design/styles-base";
-import { LinkAtomProps } from "~/types";
+import type { WithDeps } from "@atomic-design/di";
 import { classNameByColor, classNameByInteractive } from "~/helpers/classname";
+import type { Atoms, Styles } from "@atomic-design/types";
 
-export function Link(props: LinkAtomProps & WithDeps<LinkStyles>) {
+export function Link(props: Atoms.AtomProps<"Link"> & WithDeps<Styles.StyleContext<"link">>) {
     const { children, icon, before, after, href, color = "Primary", deps } = props;
     const classNames = deps.styles.link;
     const containerClassNames = [
@@ -161,13 +197,84 @@ export function Link(props: LinkAtomProps & WithDeps<LinkStyles>) {
 
 ```
 
+## packages/atoms-base/src/atoms/Section.tsx
+
+```typescript
+import type { WithDeps } from '@atomic-design/di';
+import type { Atoms, Styles } from "@atomic-design/types";
+
+export function Section(props: Atoms.AtomProps<"Section"> & WithDeps<Styles.StyleContext<"section">>) {
+    const { caption, subcaption, children, deps } = props;
+    const styles = deps.styles.section;
+
+    return (
+        <div className={styles.container}>
+            {caption && <h2 className={styles.caption}>{caption}</h2>}
+            {subcaption && <div className={styles.subcaption}>{subcaption}</div>}
+            {children && <div className={styles.content}>{children}</div>}
+        </div>
+    );
+}
+
+```
+
+## packages/atoms-base/src/atoms/Table.tsx
+
+```typescript
+import type { WithDeps } from "@atomic-design/di";
+import type { Atoms, Styles } from "@atomic-design/types";
+
+export const Table = (props: Atoms.AtomProps<"Table"> & WithDeps<Styles.StyleContext<"table">>) => {
+    const { children, deps } = props;
+    return (
+        <table className={deps.styles.table.table}>
+            {children}
+        </table>
+    );
+}
+
+```
+
+## packages/atoms-base/src/atoms/TD.tsx
+
+```typescript
+import type { WithDeps } from "@atomic-design/di";
+import type { Atoms, Styles } from "@atomic-design/types";
+
+export function TD (props: Atoms.AtomProps<"TD"> & WithDeps<Styles.StyleContext<"td">>) {
+    const { children, deps } = props;
+    return (
+        <td className={deps.styles.td.td}>
+            {children}
+        </td>
+    );
+}
+
+```
+
+## packages/atoms-base/src/atoms/TH.tsx
+
+```typescript
+import type { WithDeps } from "@atomic-design/di";
+import type { Atoms, Styles } from "@atomic-design/types";
+
+export function TH(props: Atoms.AtomProps<"TH"> & WithDeps<Styles.StyleContext<"th">>){
+    const { children, deps } = props;
+    return (
+        <th className={deps.styles.th.th}>
+            {children}
+        </th>
+    );
+}
+
+```
+
 ## packages/atoms-base/src/helpers/classname.ts
 
 ```typescript
-import { InteractiveProps, LinkAtomProps } from "~/types";
-import { Interactive, WithColors } from "@atomic-design/styles-base";
+import { Atoms, Styles } from "@atomic-design/types";
 
-export function classNameByColor(color: LinkAtomProps["color"], classNames: WithColors): string | undefined {
+export function classNameByColor(color: Atoms.ColorsProps["color"], classNames: Styles.WithColors): string | undefined {
     switch (color) {
         case "Primary": return classNames.colorPrimary;
         case "Secondary": return classNames.colorSecondary;
@@ -179,7 +286,7 @@ export function classNameByColor(color: LinkAtomProps["color"], classNames: With
     }
 }
 
-export function classNameByInteractive(props: InteractiveProps, classNames: Interactive): (string | undefined)[] {
+export function classNameByInteractive(props: Atoms.InteractiveProps, classNames: Styles.Interactive): (string | undefined)[] {
     const result = [];
     if (props.active) result.push(classNames.active);
     if (props.disabled) result.push(classNames.disabled);
@@ -215,83 +322,26 @@ export function classNameByInteractive(props: InteractiveProps, classNames: Inte
 
 ```typescript
 import { Link } from "./atoms/Link";
-import { AtomsContext } from "./types";
 import { Button } from "./atoms/Button";
+import { Card } from "./atoms/Card";
+import { Section } from "./atoms/Section";
+import { Table } from "./atoms/Table";
+import { TD } from "./atoms/TD";
+import { TH } from "./atoms/TH";
+import { Color } from "./atoms/Color";
 
-export type * from "./types";
-
-export const atomsContext: Pick<AtomsContext, "atoms"> = {
+export const atomsContext = {
     atoms: {
+        Card,
+        Section,
         Link,
         Button,
+        Table,
+        TD,
+        TH,
+        Color
     }
 };
-
-```
-
-## packages/atoms-base/src/types.ts
-
-```typescript
-import type { ReactNode, AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
-
-import type { OneAtomContext } from "@atomic-design/di";
-import type { LinkStyles, ButtonStyles } from "@atomic-design/styles-base";
-
-export type AtomsContext = LinkAtomContext & ButtonAtomContext;
-
-export type LinkAtomContext = OneAtomContext<"Link", LinkStyles, LinkAtomProps>;
-export type LinkAtomProps = ManyPartsContainer & InteractiveProps & ColorsProps & SizeProps & AnchorHTMLAttributes<HTMLAnchorElement>;
-
-export type ButtonAtomContext = OneAtomContext<"Button", ButtonStyles, ButtonAtomProps>;
-export type ButtonAtomProps = ManyPartsContainer & InteractiveProps & ColorsProps & SizeProps & ButtonHTMLAttributes<HTMLButtonElement>;
-
-export interface InteractiveProps {
-    readonly disabled?: boolean;
-    readonly active?: boolean;
-    readonly focus?: boolean;
-}
-
-type Colors = "Primary" | "Secondary" | "Accent" | "Success" | "Danger" | "Warning" | "Info";
-
-export interface ColorsProps {
-    readonly color?: Colors;
-}
-
-type Sizes = "small" | "medium" | "large";
-
-export interface SizeProps {
-    readonly size?: Sizes;
-}
-
-type InputTypes = "input" | "textarea" | "boolean";
-
-export interface InputTypeProps {
-    readonly inputType?: InputTypes;
-}
-
-export interface EditAndReadProps {
-    readonly read?: boolean;
-    readonly editInRead?: boolean;
-    readonly canEditInRead?: boolean;
-}
-
-export interface Container {
-    readonly children: ReactNode;
-}
-
-export interface ManyPartsContainer extends Container {
-    readonly icon?: ReactNode;
-    readonly before?: ReactNode;
-    readonly after?: ReactNode;
-}
-
-export interface InputContainer extends Container {
-    readonly label?: ReactNode;
-    readonly before?: ReactNode;
-    readonly after?: ReactNode;
-}
-
-
 
 ```
 
@@ -306,6 +356,25 @@ export default {
 
 ```
 
+## packages/atoms-base/test-dts/index.test-d.ts
+
+```typescript
+import { type atomsContext } from "~/index";
+import { type Atoms } from "@atomic-design/types";
+import { type DepsWithoutDeps } from "@atomic-design/di";
+
+const atomsContextWithoutDeps = {} as DepsWithoutDeps<typeof atomsContext>;
+
+atomsContextWithoutDeps as Atoms.AtomContext<"Button">;
+atomsContextWithoutDeps as Atoms.AtomContext<"Card">;
+atomsContextWithoutDeps as Atoms.AtomContext<"Section">;
+atomsContextWithoutDeps as Atoms.AtomContext<"Table">;
+atomsContextWithoutDeps as Atoms.AtomContext<"TD">;
+atomsContextWithoutDeps as Atoms.AtomContext<"TH">;
+atomsContextWithoutDeps as Atoms.AtomContext<"Color">;
+
+```
+
 ## packages/atoms-base/tsconfig.json
 
 ```json
@@ -314,34 +383,32 @@ export default {
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "module": "ESNext",
     "noEmit": true,
     "moduleResolution": "Bundler",
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
-    "types": [
-      "vite/client",
-      "vike-react",
-      "vite-plugin-vercel/types"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",
-    "jsxImportSource": "react",
     "paths": {
-      "~/*": [
-        "./src/*"
-      ]
+      "~/*": ["./src/*"]
     }
   },
-  "include": [
-    "src",
-  ]
+  "include": ["src"]
+}
+
+```
+
+## packages/atoms-base/tsconfig.test.json
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "include": ["test-dts/index.test-d.ts"],
+  "compilerOptions": {
+    "noEmit": true
+  }
 }
 
 ```
@@ -404,13 +471,11 @@ export default defineConfig({
   "version": "0.1.2",
   "description": "A minimal, semantic SCSS tokens library for atomic design systems—providing a standardized, override‑friendly set of color, spacing, typography, border, shadow, breakpoint, size and z‑index tokens to kickstart any project.",
   "type": "module",
-  "files": [
-    "src/scss/",
-    "index.scss"
-  ],
+  "files": ["src/scss/", "index.scss"],
   "style": "index.scss",
   "scripts": {
-    "build": "tsup",
+    "install_and_build": "npm i && npm run build",
+    "build": "",
     "test": "",
     "docs": "codools",
     "lint": "stylelint src/scss/**/*.scss"
@@ -740,129 +805,129 @@ $spacing-xl: 32px !default;
 // Typography tokens (Font size, Line height, Font weight, Letter spacing)
 
 // Titles
-$text-title1-font-size: 48px !default;
-$text-title1-line-height: 1.167 !default; // 56px / 48px
-$text-title1-font-weight: 700 !default;
-$text-title1-letter-spacing: -0.05em !default; // Tailwind 'tighter'
+$fontSize-title-1:      48px !default;
+$lineHeight-title-1:    1.167 !default; // 56px / 48px
+$fontWeight-title-1:    700 !default;
+$letterSpacing-title-1: -0.05em !default; // Tailwind 'tighter'
 
-$text-title2-font-size: 36px !default;
-$text-title2-line-height: 1.222 !default; // 44px / 36px
-$text-title2-font-weight: 700 !default;
-$text-title2-letter-spacing: -0.025em !default; // Tailwind 'tight'
+$fontSize-title-2:      36px !default;
+$lineHeight-title-2:    1.222 !default; // 44px / 36px
+$fontWeight-title-2:    700 !default;
+$letterSpacing-title-2: -0.025em !default; // Tailwind 'tight'
 
-$text-title3-font-size: 30px !default;
-$text-title3-line-height: 1.200 !default; // 36px / 30px
-$text-title3-font-weight: 600 !default;
-$text-title3-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-title-3:      30px !default;
+$lineHeight-title-3:    1.200 !default; // 36px / 30px
+$fontWeight-title-3:    600 !default;
+$letterSpacing-title-3: 0em !default;    // Tailwind 'normal'
 
 // Subtitles
-$text-subtitle1-font-size: 24px !default;
-$text-subtitle1-line-height: 1.333 !default; // 32px / 24px
-$text-subtitle1-font-weight: 600 !default;
-$text-subtitle1-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-subtitle-1:      24px !default;
+$lineHeight-subtitle-1:    1.333 !default; // 32px / 24px
+$fontWeight-subtitle-1:    600 !default;
+$letterSpacing-subtitle-1: 0em !default;   // Tailwind 'normal'
 
-$text-subtitle2-font-size: 20px !default;
-$text-subtitle2-line-height: 1.400 !default; // 28px / 20px
-$text-subtitle2-font-weight: 500 !default;
-$text-subtitle2-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-subtitle-2:      20px !default;
+$lineHeight-subtitle-2:    1.400 !default; // 28px / 20px
+$fontWeight-subtitle-2:    500 !default;
+$letterSpacing-subtitle-2: 0em !default;   // Tailwind 'normal'
 
 // Body text
-$text-body1-font-size: 16px !default;
-$text-body1-line-height: 1.500 !default; // 24px / 16px
-$text-body1-font-weight: 400 !default;
-$text-body1-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-body-1:      16px !default;
+$lineHeight-body-1:    1.500 !default; // 24px / 16px
+$fontWeight-body-1:    400 !default;
+$letterSpacing-body-1: 0em !default;   // Tailwind 'normal'
 
-$text-body2-font-size: 14px !default;
-$text-body2-line-height: 1.429 !default; // 20px / 14px
-$text-body2-font-weight: 400 !default;
-$text-body2-letter-spacing: 0em !default; // Tailwind 'normal'
+$fontSize-body-2:      14px !default;
+$lineHeight-body-2:    1.429 !default; // 20px / 14px
+$fontWeight-body-2:    400 !default;
+$letterSpacing-body-2: 0em !default;   // Tailwind 'normal'
 
 // Captions
-$text-caption1-font-size: 12px !default;
-$text-caption1-line-height: 1.333 !default; // 16px / 12px
-$text-caption1-font-weight: 400 !default;
-$text-caption1-letter-spacing: 0.025em !default; // Tailwind 'wide'
+$fontSize-caption-1:      12px !default;
+$lineHeight-caption-1:    1.333 !default; // 16px / 12px
+$fontWeight-caption-1:    400 !default;
+$letterSpacing-caption-1: 0.025em !default; // Tailwind 'wide'
 
-$text-caption2-font-size: 10px !default;
-$text-caption2-line-height: 1.400 !default; // 14px / 10px
-$text-caption2-font-weight: 400 !default;
-$text-caption2-letter-spacing: 0.05em !default; // Tailwind 'wider'
+$fontSize-caption-2:      10px !default;
+$lineHeight-caption-2:    1.400 !default; // 14px / 10px
+$fontWeight-caption-2:    400 !default;
+$letterSpacing-caption-2: 0.05em !default;  // Tailwind 'wider'
 
 // Overline
-$text-overline-font-size: 10px !default;
-$text-overline-line-height: 1.600 !default; // 16px / 10px
-$text-overline-font-weight: 500 !default; // typically semi-bold
-$text-overline-letter-spacing: 0.1em !default; // Tailwind 'widest'
+$fontSize-overline:      10px !default;
+$lineHeight-overline:    1.600 !default; // 16px / 10px
+$fontWeight-overline:    500 !default;   // typically semi-bold
+$letterSpacing-overline: 0.1em !default; // Tailwind 'widest'
 
 // Mixins for typographic styles
 @mixin title1 {
-  font-size: $text-title1-font-size;
-  font-weight: $text-title1-font-weight;
-  line-height: $text-title1-line-height;
-  letter-spacing: $text-title1-letter-spacing;
+  font-size:      $fontSize-title-1;
+  font-weight:    $fontWeight-title-1;
+  line-height:    $lineHeight-title-1;
+  letter-spacing: $letterSpacing-title-1;
 }
 
 @mixin title2 {
-  font-size: $text-title2-font-size;
-  font-weight: $text-title2-font-weight;
-  line-height: $text-title2-line-height;
-  letter-spacing: $text-title2-letter-spacing;
+  font-size:      $fontSize-title-2;
+  font-weight:    $fontWeight-title-2;
+  line-height:    $lineHeight-title-2;
+  letter-spacing: $letterSpacing-title-2;
 }
 
 @mixin title3 {
-  font-size: $text-title3-font-size;
-  font-weight: $text-title3-font-weight;
-  line-height: $text-title3-line-height;
-  letter-spacing: $text-title3-letter-spacing;
+  font-size:      $fontSize-title-3;
+  font-weight:    $fontWeight-title-3;
+  line-height:    $lineHeight-title-3;
+  letter-spacing: $letterSpacing-title-3;
 }
 
 @mixin subtitle1 {
-  font-size: $text-subtitle1-font-size;
-  font-weight: $text-subtitle1-font-weight;
-  line-height: $text-subtitle1-line-height;
-  letter-spacing: $text-subtitle1-letter-spacing;
+  font-size:      $fontSize-subtitle-1;
+  font-weight:    $fontWeight-subtitle-1;
+  line-height:    $lineHeight-subtitle-1;
+  letter-spacing: $letterSpacing-subtitle-1;
 }
 
 @mixin subtitle2 {
-  font-size: $text-subtitle2-font-size;
-  font-weight: $text-subtitle2-font-weight;
-  line-height: $text-subtitle2-line-height;
-  letter-spacing: $text-subtitle2-letter-spacing;
+  font-size:      $fontSize-subtitle-2;
+  font-weight:    $fontWeight-subtitle-2;
+  line-height:    $lineHeight-subtitle-2;
+  letter-spacing: $letterSpacing-subtitle-2;
 }
 
 @mixin body1 {
-  font-size: $text-body1-font-size;
-  font-weight: $text-body1-font-weight;
-  line-height: $text-body1-line-height;
-  letter-spacing: $text-body1-letter-spacing;
+  font-size:      $fontSize-body-1;
+  font-weight:    $fontWeight-body-1;
+  line-height:    $lineHeight-body-1;
+  letter-spacing: $letterSpacing-body-1;
 }
 
 @mixin body2 {
-  font-size: $text-body2-font-size;
-  font-weight: $text-body2-font-weight;
-  line-height: $text-body2-line-height;
-  letter-spacing: $text-body2-letter-spacing;
+  font-size:      $fontSize-body-2;
+  font-weight:    $fontWeight-body-2;
+  line-height:    $lineHeight-body-2;
+  letter-spacing: $letterSpacing-body-2;
 }
 
 @mixin caption1 {
-  font-size: $text-caption1-font-size;
-  font-weight: $text-caption1-font-weight;
-  line-height: $text-caption1-line-height;
-  letter-spacing: $text-caption1-letter-spacing;
+  font-size:      $fontSize-caption-1;
+  font-weight:    $fontWeight-caption-1;
+  line-height:    $lineHeight-caption-1;
+  letter-spacing: $letterSpacing-caption-1;
 }
 
 @mixin caption2 {
-  font-size: $text-caption2-font-size;
-  font-weight: $text-caption2-font-weight;
-  line-height: $text-caption2-line-height;
-  letter-spacing: $text-caption2-letter-spacing;
+  font-size:      $fontSize-caption-2;
+  font-weight:    $fontWeight-caption-2;
+  line-height:    $lineHeight-caption-2;
+  letter-spacing: $letterSpacing-caption-2;
 }
 
 @mixin overline {
-  font-size: $text-overline-font-size;
-  font-weight: $text-overline-font-weight;
-  line-height: $text-overline-line-height;
-  letter-spacing: $text-overline-letter-spacing;
+  font-size:      $fontSize-overline;
+  font-weight:    $fontWeight-overline;
+  line-height:    $lineHeight-overline;
+  letter-spacing: $letterSpacing-overline;
   text-transform: uppercase;
 }
 
@@ -871,11 +936,11 @@ $text-overline-letter-spacing: 0.1em !default; // Tailwind 'widest'
 ## packages/design-tokens/src/scss/z-index.scss
 
 ```scss
-$z-index-dropdown: 1000 !default;
-$z-index-sticky: 1020 !default;
-$z-index-modal: 1040 !default;
-$z-index-popover: 1060 !default;
-$z-index-tooltip: 1080 !default;
+$zIndex-dropdown: 1000 !default;
+$zIndex-sticky: 1020 !default;
+$zIndex-modal: 1040 !default;
+$zIndex-popover: 1060 !default;
+$zIndex-tooltip: 1080 !default;
 
 ```
 
@@ -890,60 +955,63 @@ export default {
 
 ```
 
-## packages/di/index.scss
-
-```scss
-@forward "src/helpers";
-
-```
-
 ## packages/di/package.json
 
 ```json
 {
   "name": "@atomic-design/di",
   "version": "0.1.1",
-  "description": "",
-  "type": "module",
-  "files": [
-    "dist"
+  "description": "Lightweight, type-safe dependency inversion utilities for Atomic Design architectures in React",
+  "keywords": [
+    "atomic-design",
+    "dependency-injection",
+    "dependency-inversion",
+    "di",
+    "react",
+    "react-context",
+    "react-hooks",
+    "design-system",
+    "variants",
+    "typescript",
+    "ssr",
+    "csr"
   ],
+  "type": "module",
+  "files": ["dist"],
   "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
   },
+  "sideEffects": false,
   "scripts": {
+    "install_and_build": "npm i && npm run build",
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint ."
   },
-  "dependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.23.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "codools": "^0.2.17",
-    "eslint": "^9.23.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-prettier": "^5.2.5",
-    "eslint-plugin-react": "^7.37.4",
-    "globals": "^16.0.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0",
-    "vite": "^6.2.4",
-    "vite-plugin-dts": "^4.5.3"
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   }
 }
 
@@ -980,18 +1048,30 @@ export function createVariantsContext <
     variantManager.setDepsHook(() => useAtomic());
 
     const AtomicProvider = ({children, variants, space, variant }: AtomicProviderProps<(typeof initVariants)["variants"]>) => {
-        const parent = useContext(reactContext);
-        const value = useMemo(async () => {
-            const parentVariants = parent.variants;
-            const newVariants = mergeVariants(parentVariants, variants, space, variant);
-            const newContext = await variantManager.getVariant(newVariants);
-            return { variants: newVariants, context: newContext };
-        }, [parent, variants, space, variant]);
-        const v = use(value);
+        const { variants: parentVariants } = useContext(reactContext);
+        const newVariants = useMemo(
+            () => mergeVariants(parentVariants, variants, space, variant),
+            [parentVariants, space, variant, variants]
+        );
+        const newContextPromise = useMemo(async () => {
+            try {
+                return await variantManager.getVariant(newVariants);
+            } catch (e) {
+                console.error(e);
+                throw e;
+            }
+        }, [ newVariants ]);
+        const newContext = use(newContextPromise);
+        const v = useMemo(
+            () => ({ variants: newVariants, context: newContext }),
+            [newVariants, newContext]
+        );
         return <Provider value={v} >{children}</Provider>
     }
 
-    const SuspenseProvider: typeof AtomicProvider = (props) => <Suspense><AtomicProvider {...props}/></Suspense>
+    const SuspenseProvider: typeof AtomicProvider = (props) => <Suspense fallback={null}>
+        <AtomicProvider {...props}/>
+    </Suspense>;
 
     type ComponentKeys<Space extends keyof Ctx> =
         {
@@ -1066,7 +1146,14 @@ function createVariantsManager <
 >(context: {[SpaceName in keyof Ctx]: () => WrappedPromise<Ctx[SpaceName], Ctx>}, variantsBySpace: V) {
     let useContextHook: () => Ctx;
     const useContext = () => useContextHook();
+    const loadedVariants = new Map<string, Ctx>();
+
     const getVariant = async (selectedVariants: {[SpaceName in keyof Ctx]?: keyof V[SpaceName]}) => {
+        const hash = getVariantsHash(selectedVariants);
+        let loadedVariant = loadedVariants.get(hash);
+        if (loadedVariant) {
+            return loadedVariant;
+        }
         const promises = Object.entries(context).map(
             async ([spaceName, spaceValue]: [keyof Ctx, () => WrappedPromise<Ctx[keyof Ctx], Ctx>]) => {
                 const selectedVariant = selectedVariants[spaceName] as string;
@@ -1087,7 +1174,9 @@ function createVariantsManager <
             }
         );
         const entries = await Promise.all(promises);
-        return Object.fromEntries(entries) as Ctx;
+        loadedVariant = Object.fromEntries(entries) as Ctx;
+        loadedVariants.set(hash, loadedVariant)
+        return loadedVariant;
     }
     const getInitVariants = () => throwingObj as {
         variants: {[SpaceName in keyof Ctx]?: keyof V[SpaceName]};
@@ -1102,6 +1191,13 @@ function createVariantsManager <
         getInitVariants,
         setDepsHook,
     }
+}
+
+function getVariantsHash (variants: Record<string, string | number | symbol | undefined>) {
+    return Object.entries(variants)
+        .filter(([, value]) => value !== undefined)
+        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+        .map(([key, value]) => `${key}=${String(value)}`).join("&");
 }
 
 ```
@@ -1211,17 +1307,21 @@ export {
 ```typescript
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 
-type OmitDeps<T> =  T extends PlainObject ? Omit<T, "deps"> : T;
+type OmitDeps<T> =  T extends { deps: unknown } ? Omit<T, "deps"> : T;
 
 type FunctionWithoutDeps<F> =
-    F extends (this: infer T, props: infer P, ...args: infer A) => infer R ? (this: OmitDeps<T>, props: OmitDeps<P>, ...args: A) => R : never;
+    F extends () => infer R ? () => R :
+        F extends (props: infer P, ...args: infer A) => infer R ? (props: OmitDeps<P>, ...args: A) => R :
+            F extends (this: infer T, props: infer P, ...args: infer A) => infer R
+                ? (this: OmitDeps<T>, props: OmitDeps<P>, ...args: A) => R
+                : never;
 
 export type ComponentWithoutDeps<C> =
     C extends ComponentType<infer P>
         ? ComponentType<Omit<P, 'deps'>>
-        : never;
+        : "never";
 
 export type DepsWithoutDeps<T> = {
     [K in keyof T]:
@@ -1238,8 +1338,8 @@ export type WithDeps<Deps> = {
     deps: DepsWithoutDeps<Deps>;
 }
 
-export type DepsFunctionComponent<P = any, Deps = undefined> = ComponentType<P & WithDeps<Deps>>
-export type DepsFunction<Arguments extends unknown[], Return, Deps = undefined> = Deps extends undefined ? (...props: Arguments) => Return : (this: WithDeps<Deps>, ...props: Arguments) => Return;
+export type DepsFunctionComponent<P = any, Deps = void> = ComponentType<P & WithDeps<Deps>>
+export type DepsFunction<Arguments extends unknown[], Return, Deps = void> = Deps extends void ? (...props: Arguments) => Return : (this: WithDeps<Deps>, ...props: Arguments) => Return;
 
 export type AnyFunction = (...args: unknown[]) => unknown;
 export type PlainObject = Record<string, unknown>;
@@ -1254,42 +1354,28 @@ export type ClassNames<ClassNamesStrings extends string> = {
     readonly [ClassName in ClassNamesStrings]?: string;
 };
 
-export type OneFunctionComponentContext<Space extends string, Name extends string, Props, Deps = undefined> = {
+export type ReactNodes<ClassNamesStrings extends string> = {
+    readonly [ClassName in ClassNamesStrings]?: ReactNode;
+};
+
+export type OneFunctionComponentContext<Space extends string, Name extends string, Props, Deps = void> = {
     [S in Space]: {
         [N in Name]: DepsFunctionComponent<Props, Deps>;
     }
 }
 
-export type OneFunctionContext<Space extends string, Name extends string, Arguments extends unknown[], Return, Deps = undefined> = {
+export type OneFunctionContext<Space extends string, Name extends string, Arguments extends unknown[], Return, Deps = void> = {
     [S in Space]: {
         [N in Name]: DepsFunction<Arguments, Return, Deps>;
     }
 }
 
-export type OneFunctionComponentContextWithDeps<Space extends string, Name extends string, Props, Deps = undefined> =
-    Deps extends undefined ? OneFunctionComponentContext<Space, Name, Props, Deps> : Deps & OneFunctionComponentContext<Space, Name, Props, Deps>;
-export type OneFunctionContextWithDeps<Space extends string, Name extends string, Arguments extends unknown[], Return, Deps = undefined> =
-    Deps extends undefined ? OneFunctionContext<Space, Name, Arguments, Return, Deps> : Deps & OneFunctionContext<Space, Name, Arguments, Return, Deps>;
-
-export type OneAtomContext<Name extends string, Deps, Props> = OneFunctionComponentContextWithDeps<"atoms", Name, Props, Deps>;
-
-export type OneMoleculeContext<Name extends string, Deps, Props> = OneFunctionComponentContextWithDeps<"molecules", Name, Props, Deps>;
-
-export type OneMoleculeHelperContext<Name extends string, Arguments extends unknown[], Return, Deps = undefined> = OneFunctionContextWithDeps<"moleculesHelpers", Name, Arguments, Return, Deps>;
-
-export type OneCellContext<Name extends string, Deps, Props> = OneFunctionComponentContextWithDeps<"cells", Name, Props, Deps>;
-export type OneOrganContext<Name extends string, Deps, Props> = OneFunctionComponentContextWithDeps<"organs", Name, Props, Deps>;
-
-```
-
-## packages/di/stylelint.config.js
-
-```javascript
-export default {
-    extends: "stylelint-config-standard-scss",
-    rules: {
+export type OneContextItem<Space extends string, Name extends string, F> = {
+    [S in Space]: {
+        [N in Name]: F;
     }
-};
+}
+
 
 ```
 
@@ -1301,34 +1387,19 @@ export default {
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "module": "ESNext",
     "noEmit": true,
     "moduleResolution": "Bundler",
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
-    "types": [
-      "vite/client",
-      "vike-react",
-      "vite-plugin-vercel/types"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",
-    "jsxImportSource": "react",
     "paths": {
-      "~/*": [
-        "./src/*"
-      ]
+      "~/*": ["./src/*"]
     }
   },
-  "include": [
-    "src",
-  ]
+  "include": ["src"]
 }
 
 ```
@@ -1408,6 +1479,7 @@ export default nextConfig;
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "install_and_build": "npm i && npm run build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -1836,8 +1908,8 @@ const atomicContext = {
     styles: async () => blankDeps((await import("@atomic-design/styles-base")).stylesContext.styles),
     atoms: async () => extractComponentDeps((await import("@atomic-design/atoms-base")).atomsContext.atoms),
     molecules: async () => extractComponentDeps((await import("@atomic-design/molecules-base")).moleculesContext.molecules),
-    moleculesHelpers: () => blankDeps({
-        useIsActiveLink: (href?: string) => {
+    moleculeHooks: () => blankDeps({
+        useLinkProps: (href?: string) => {
             const pathname = usePathname() || '/'
             if (href === undefined) {
                 return false;
@@ -2005,37 +2077,76 @@ import { getServerReadyComponent, AtomicProvider } from "~/components/atomicCont
 
 export { AtomicProvider };
 export const Link = getServerReadyComponent("molecules", "Link");
-
+export const SpaceForm = getServerReadyComponent("storeComponents", "SpaceForm");
+export const ValueProvider = getServerReadyComponent("storeComponents", "ValueProvider");
 
 ```
 
 ## packages/example_vike/components/atomicContext.tsx
 
 ```typescript
-"use client"
 import "@atomic-design/styles-base/index.css";
 import { blankDeps, extractComponentDeps, createVariantsContext } from "@atomic-design/di";
 import { usePageContext } from "vike-react/usePageContext";
+import { useMemo } from "react";
+import { PageContext } from "vike/types";
 
 const [useAtomic, AtomicProvider, getServerReadyComponent] = createVariantsContext({
     "contextName": () => blankDeps("ttt11"),
     styles: async () => blankDeps((await import("@atomic-design/styles-base")).stylesContext.styles),
     atoms: async () => extractComponentDeps((await import("@atomic-design/atoms-base")).atomsContext.atoms),
     molecules: async () => extractComponentDeps((await import("@atomic-design/molecules-base")).moleculesContext.molecules),
-    moleculesHelpers: () => blankDeps({
-        useIsActiveLink: (href?: string) => {
+    moleculesHooks: () => blankDeps({
+        useLinkProps: (href?: string) => {
             const pageContext = usePageContext();
-            if (href === undefined) {
-                return false;
-            }
-            const { urlPathname } = pageContext;
-            return href === "/" ? urlPathname === href : urlPathname.startsWith(href);
+            const { urlPathname, locale } = pageContext as PageContext & { locale: string };
+            const linkProps = useMemo(() => {
+                const active = href === undefined ? false : href === "/" ? urlPathname === href : urlPathname.startsWith(href)
+                return {
+                    href: `/${locale}${href}`,
+                    active,
+                };
+            }, [href, urlPathname]);
+            return linkProps;
         }
     }),
+    // cells: () => {
+    //     const Color = ({ name = "color", deps: { molecules: { Field } }, signals: { useValue } })  => {
+    //         return <Field {...useFieldProps(name)} />
+    //     }
+    //     return extractComponentDeps({
+    //         Color,
+    //     })
+    // },
+    sections: async () => {
+        const designTokens = await import('~/components/sections/design-tokens');
+        const sections = {
+            ...designTokens
+        }
+        return extractComponentDeps(sections);
+    },
+    storeHooks: async () => {
+        const { storeHooks } = (await import("@atomic-design/store-react-context")).storeContext;
+        return blankDeps(storeHooks);
+    },
+    storeComponents: async () => {
+        const { storeComponents } = (await import("@atomic-design/store-react-context")).storeContext;
+        return blankDeps(storeComponents);
+    },
+    i18n: async () => {
+        const i18n = await import('~/components/i18n/en');
+        return blankDeps(i18n);
+    }
 }, {
     contextName: {
         v1: () => blankDeps("text v1"),
         v2: () => blankDeps("text v2"),
+    },
+    i18n: {
+        ['en-US']: async () =>
+            blankDeps(await import('~/components/i18n/en')),
+        ['de-DE']: async () =>
+            blankDeps(await import('~/components/i18n/de')),
     }
 })
 
@@ -2043,9 +2154,306 @@ export { useAtomic, AtomicProvider, getServerReadyComponent }
 
 ```
 
-## packages/example_vike/components/types.ts
+## packages/example_vike/components/i18n/de.ts
 
 ```typescript
+export * from "~/components/sections/design-tokens/i18n/de";
+
+```
+
+## packages/example_vike/components/i18n/en.ts
+
+```typescript
+export * from "~/components/sections/design-tokens/i18n/en";
+
+```
+
+## packages/example_vike/components/sections/design-tokens/ColorsTokens.tsx
+
+```typescript
+import type { WithDeps } from "@atomic-design/di";
+import { Atoms, Store } from "@atomic-design/types";
+import { designTokens } from "~/database/designTokens";
+import { OneContextItem } from "@atomic-design/di";
+import React from "react";
+import { DesignTokens } from "~/components/sections/design-tokens/i18n/types";
+
+type Deps = Atoms.AtomContext<"TD">
+    & Atoms.AtomContext<"TH">
+    & Atoms.AtomContext<"Color">
+    & Atoms.AtomContext<"Section">
+    & Store.StoreHooksContext<"useSpace">
+    & Store.StoreHooksContext<"useValue">
+    & OneContextItem<"i18n", "designTokens", DesignTokens>;
+
+export const ColorsTokens = (props: WithDeps<Deps>) => {
+    const { deps: {
+        atoms: {
+            Section
+        },
+        i18n: { designTokens: { colorsTokens } }
+    } } = props;
+
+    const description = colorsTokens.description({
+        module: '@atomic-design/design-tokens',
+        tokensTable: <ColorsTokensTable deps={props.deps} />
+    })
+
+    return <Section caption={colorsTokens.title} >
+        {description}
+    </Section>;
+}
+
+function ColorsTokensTable (props: WithDeps<Atoms.AtomContext<"TD"> & Atoms.AtomContext<"TH"> & Atoms.AtomContext<"Color">>) {
+
+    const colorsEntries = Object.entries(designTokens).filter(([,{ space, kind, step }]) => step && space === 'color' && kind && !['background', 'text', 'border'].includes(kind));
+    const tokens = Object.fromEntries(colorsEntries);
+
+    const kinds = [...new Set(colorsEntries.map(([, { kind }]) => kind))] as string[];
+    const steps = [...new Set(colorsEntries.map(([, { step }]) => step))] as string[];
+
+    const { deps: {
+        atoms: {
+            TD, TH, Color
+        },
+    } } = props;
+
+    return <table>
+        <thead>
+            <tr>
+                <TH />{steps.map((step) => <TH key={step}>{step}</TH>)}
+            </tr>
+        </thead>
+        <tbody>
+            {kinds.map((kind) => <tr key={kind}>
+                <TH>{kind}</TH>
+                {steps.map((step) => <TD key={step}>
+                    <Color color={tokens[getToken("color", kind, step)].value} />
+                </TD>)}
+            </tr>)}
+        </tbody>
+    </table>;
+}
+
+function getToken(space: string, kind: string, step: string) {
+   return `${space}-${kind}-${step}`;
+}
+
+
+
+```
+
+## packages/example_vike/components/sections/design-tokens/DesignTokensHeader.tsx
+
+```typescript
+import type { WithDeps } from "@atomic-design/di";
+import { OneContextItem } from "@atomic-design/di";
+import React from "react";
+import { DesignTokens } from "~/components/sections/design-tokens/i18n/types";
+
+type Deps = OneContextItem<"i18n", "designTokens", DesignTokens>;
+
+export const DesignTokensHeader = (props: WithDeps<Deps>) => {
+    return <h1>{props.deps.i18n.designTokens.pageTitle}</h1>;
+}
+
+```
+
+## packages/example_vike/components/sections/design-tokens/i18n/de.tsx
+
+```typescript
+import { DesignTokens } from "./types";
+
+export const designTokens: DesignTokens = {
+    pageTitle: "Design Tokens",
+    colorsTokens: {
+        title: "Farb-Tokens",
+        description: ({ module, tokensTable }) => (
+            <>
+                <p>Diese Demo zeigt die Kern-Design-Tokens von <code>{module}</code>.</p>
+                {tokensTable}
+            </>
+        ),
+    },
+};
+
+```
+
+## packages/example_vike/components/sections/design-tokens/i18n/en.tsx
+
+```typescript
+import { DesignTokens } from "./types";
+
+export const designTokens: DesignTokens = {
+    pageTitle: "Design Tokens",
+    colorsTokens: {
+        title: "Colors Tokens",
+        description: ({ module, tokensTable }) => <>
+            <p>This demo shows core design tokens from <code>{module}</code>.</p>
+            {tokensTable}
+        </>
+    }
+};
+
+```
+
+## packages/example_vike/components/sections/design-tokens/i18n/types.ts
+
+```typescript
+import { ReactNode } from "react";
+
+export interface DesignTokens {
+    pageTitle: string,
+    colorsTokens: {
+        title: string,
+        description: (props: { module: string, tokensTable: ReactNode }) => ReactNode
+    }
+}
+
+```
+
+## packages/example_vike/components/sections/design-tokens/index.ts
+
+```typescript
+import { DesignTokensHeader } from './DesignTokensHeader';
+import { ColorsTokens } from './ColorsTokens';
+import { SpacesTokens } from './SpacesTokens';
+
+export { ColorsTokens, DesignTokensHeader, SpacesTokens };
+
+```
+
+## packages/example_vike/components/sections/design-tokens/SpacesTokens.tsx
+
+```typescript
+import type { WithDeps } from "@atomic-design/di";
+import { Atoms, Store } from "@atomic-design/types";
+import { designTokens } from "~/database/designTokens";
+import { OneContextItem } from "@atomic-design/di";
+import React from "react";
+import { DesignTokens } from "~/components/sections/design-tokens/i18n/types";
+
+type Deps = Atoms.AtomContext<"TD">
+    & Atoms.AtomContext<"TH">
+    & Atoms.AtomContext<"Color">
+    & Atoms.AtomContext<"Section">
+    & Store.StoreHooksContext<"useSpace">
+    & Store.StoreHooksContext<"useValue">
+    & OneContextItem<"i18n", "designTokens", DesignTokens>;
+
+export const SpacesTokens = (props: WithDeps<Deps>) => {
+    const { deps: {
+        atoms: {
+            Section
+        },
+        i18n: { designTokens: { colorsTokens } }
+    } } = props;
+
+    const description = colorsTokens.description({
+        module: '@atomic-design/design-tokens',
+        tokensTable: <SpacesTokensTable deps={props.deps} />
+    })
+
+    return <Section caption={colorsTokens.title} >
+        {description}
+    </Section>;
+}
+
+function SpacesTokensTable (props: WithDeps<Atoms.AtomContext<"TD"> & Atoms.AtomContext<"TH"> & Atoms.AtomContext<"Color">>) {
+
+    const spacesEntries = Object.entries(designTokens).filter(([,{ space, step }]) => step && space === 'spacing');
+    const tokens = Object.fromEntries(spacesEntries);
+
+    const steps = [...new Set(spacesEntries.map(([, { step }]) => step))] as string[];
+
+    const { deps: {
+        atoms: {
+            TD, TH
+        },
+    } } = props;
+
+    return <table>
+        <tbody>
+            {steps.map((step) => {
+                const value = tokens[getToken("spacing", step)].value;
+                const el = <div style={{ width: '20px', height: '20px', backgroundColor: 'grey', margin: value }}/>;
+                return <tr key={step}>
+                    <TH>{step}</TH>
+                    <TD>
+                        {value}
+                    </TD>
+                    <TD>
+                        <div style={{ width: "max-content", display: 'flex', flex: '0 0 auto', border: '1px solid grey' }}>{el}</div>
+                    </TD>
+                </tr>;
+            })}
+        </tbody>
+    </table>;
+}
+
+function getToken(space: string, step: string) {
+   return `${space}-${step}`;
+}
+
+
+
+```
+
+## packages/example_vike/database/designTokens/index.ts
+
+```typescript
+import cssTokens from "~/database/designTokens/styles.module.scss";
+
+export interface Token {
+    token: string;
+    space: string;
+    kind?: string;
+    step?: string;
+    value: string;
+}
+
+const nameParsers = {
+    border: ([step]: string[]) => ({ step }),
+    color: ([kind, step]: string[]) => ({ kind, step }),
+    breakpoint: ([step]: string[]) => ({ step }),
+    shadow: ([step]: string[]) => ({ step }),
+    width: ([step]: string[]) => ({ step }),
+    height: ([step]: string[]) => ({ step }),
+    spacing: ([step]: string[]) => ({ step }),
+    fontSize: ([kind, step]: string[]) => ({ kind, step }),
+    lineHeight: ([kind, step]: string[]) => ({ kind, step }),
+    fontWeight: ([kind, step]: string[]) => ({ kind, step }),
+    letterSpacing: ([kind, step]: string[]) => ({ kind, step }),
+    zIndex: ([kind]: string[]) => ({ kind }),
+} as const;
+
+export const designTokens = Object.fromEntries(
+    Object.entries(cssTokens)
+        .map(([token, value]) => {
+            const [space, ...parts] = token.split('-');
+            const nameParser = space in nameParsers ? nameParsers[space as keyof typeof nameParsers] : () => ({});
+            return [token, { token, space, ...(nameParser ? nameParser(parts) : {}), value } as Token];
+        })
+);
+
+```
+
+## packages/example_vike/database/designTokens/styles.module.scss
+
+```scss
+@use "sass:meta";
+@use "sass:list";
+@use "../../../../node_modules/@atomic-design/design-tokens/index" as tokens;
+
+$export-types: ("number", "string", "color", "bool", null, "list");
+
+:export {
+  @each $name, $value in meta.module-variables(tokens) {
+    @if list.index($export-types, meta.type-of($value)) != null {
+      #{$name}: $value;
+    }
+  }
+}
 
 ```
 
@@ -2072,6 +2480,25 @@ export type { TodoItem };
 
 ```
 
+## packages/example_vike/layouts/AppWrapper.tsx
+
+```typescript
+import * as React from "react";
+import { usePageContext } from "vike-react/usePageContext";
+import { AtomicProvider } from "~/components/atomicContext";
+import { locales } from "~/locales";
+import { useMemo } from "react";
+
+export function AppWrapper({ children }: { children: React.ReactNode }) {
+    const { locale } = usePageContext() as unknown as { locale: typeof locales[number] };
+    const variants = useMemo<Parameters<typeof AtomicProvider>[0]["variants"]>(() => ({
+       i18n: locale
+    }), [locale]);
+    return <AtomicProvider variants={variants}>{ children }</AtomicProvider>;
+}
+
+```
+
 ## packages/example_vike/layouts/LayoutDefault.tsx
 
 ```typescript
@@ -2079,9 +2506,10 @@ import "./style.css";
 import logoUrl from "../assets/logo.svg";
 import { Link, AtomicProvider } from "~/components/atomic";
 import * as React from "react";
+import { AppWrapper } from "~/layouts/AppWrapper";
 
-export default function asLayoutDefault({ children }: { children: React.ReactNode }) {
-    return (
+export function LayoutDefault({ children }: { children: React.ReactNode }) {
+    return <AppWrapper>
         <div
             style={{
                 display: "flex",
@@ -2091,17 +2519,18 @@ export default function asLayoutDefault({ children }: { children: React.ReactNod
         >
             <Sidebar>
                 <Logo/>
-                    <AtomicProvider space="contextName" variant="v1">
+
                         <Link href="/">Welcome</Link>
                         <Link color="Success" href="/todo">Todo</Link>
+                        <Link href="/design-tokens">Design Tokens</Link>
                         <AtomicProvider space="contextName" variant="v2">
                             <Link href="/star-wars">Data Fetching</Link>
                         </AtomicProvider>
-                    </AtomicProvider>
+
             </Sidebar>
             <Content>{children}</Content>
         </div>
-    );
+    </AppWrapper>;
 }
 
 function Sidebar({ children }: { children: React.ReactNode }) {
@@ -2191,6 +2620,37 @@ body.page-is-transitioning #page-content {
 
 ```
 
+## packages/example_vike/locales/extractLocale.ts
+
+```typescript
+import { localeDefault } from './locales'
+
+export function extractLocale(urlPathname: string) {
+    const [ _, locale, urlPathnameWithoutLocale = '' ] = urlPathname.split('/', 3)
+    return {
+        locale: locale || localeDefault,
+        urlPathnameWithoutLocale: `/${urlPathnameWithoutLocale}`
+    }
+}
+
+```
+
+## packages/example_vike/locales/index.ts
+
+```typescript
+export { extractLocale } from './extractLocale'
+export { locales, localeDefault } from './locales'
+
+```
+
+## packages/example_vike/locales/locales.ts
+
+```typescript
+export const locales = ['en-US', 'de-DE'] as const;
+export const localeDefault = locales[0]
+
+```
+
 ## packages/example_vike/package.json
 
 ```json
@@ -2205,17 +2665,21 @@ body.page-is-transitioning #page-content {
     "@vitejs/plugin-react": "^4.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "vike-react": "^0.6.4",
+    "vike-react": "^0.6.5",
+    "@atomic-design/design-tokens": "*",
     "@atomic-design/styles-base": "*",
     "@atomic-design/atoms-base": "*",
     "@atomic-design/molecules-base": "*",
-    "@atomic-design/di": "*"
+    "@atomic-design/store-react-context": "*",
+    "@atomic-design/di": "*",
+    "@atomic-design/types": "*"
   },
   "devDependencies": {
     "typescript": "^5.8.3",
-    "vite": "^6.2.6",
+    "vite": "^6.3.5",
     "@types/react": "^19.1.1",
-    "@types/react-dom": "^19.1.2"
+    "@types/react-dom": "^19.1.2",
+    "sass-embedded": "^1.89.2"
   },
   "type": "module",
   "private": true
@@ -2253,14 +2717,15 @@ export default function Page() {
 ```typescript
 import vikeReact from "vike-react/config";
 import type { Config } from "vike/types";
-import Layout from "../layouts/LayoutDefault.js";
+import { LayoutDefault } from "../layouts/LayoutDefault.js";
 
 // Default config (can be overridden by pages)
 // https://vike.dev/config
 
 export default {
   // https://vike.dev/Layout
-  Layout,
+  Layout: LayoutDefault,
+  passToClient: ['pageProps', 'locale', 'urlLogical'],
 
   // https://vike.dev/head-tags
   title: "My Vike App",
@@ -2289,6 +2754,32 @@ export default function HeadDefault() {
 
 ```
 
+## packages/example_vike/pages/+onBeforeRoute.ts
+
+```typescript
+import { PageContext } from "vike/types";
+
+export default onBeforeRoute
+
+import { extractLocale } from '~/locales'
+import { modifyUrl } from 'vike/modifyUrl'
+
+function onBeforeRoute(pageContext: PageContext) {
+    const url = pageContext.urlParsed
+    const { urlPathnameWithoutLocale, locale } = extractLocale(url.pathname)
+    const urlLogical = modifyUrl(url.href, { pathname: urlPathnameWithoutLocale });
+    return {
+        pageContext: {
+            // Make `locale` available as pageContext.locale
+            locale,
+            // Vike's router will use pageContext.urlLogical instead of pageContext.urlOriginal
+            urlLogical,
+        },
+    }
+}
+
+```
+
 ## packages/example_vike/pages/+onPageTransitionEnd.ts
 
 ```typescript
@@ -2310,6 +2801,26 @@ export const onPageTransitionStart: OnPageTransitionStartAsync = async () => {
   console.log("Page transition start");
   document.querySelector("body")?.classList.add("page-is-transitioning");
 };
+
+```
+
+## packages/example_vike/pages/design-tokens/+Page.tsx
+
+```typescript
+import React from 'react';
+import { getServerReadyComponent } from "~/components/atomicContext";
+
+export const ColorsTokens = getServerReadyComponent("sections", "ColorsTokens");
+export const DesignTokensHeader = getServerReadyComponent("sections", "DesignTokensHeader");
+export const SpacesTokens = getServerReadyComponent("sections", "SpacesTokens");
+
+export default function Page() {
+    return <>
+        <DesignTokensHeader />
+        <ColorsTokens />
+        <SpacesTokens />
+    </>;
+}
 
 ```
 
@@ -2588,29 +3099,16 @@ export function TodoList({ initialTodoItems }: { initialTodoItems: { text: strin
     "noEmit": true,
     "moduleResolution": "Bundler",
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
-    "types": [
-      "vite/client",
-      "vike-react"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["vite/client", "vike-react"],
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "paths": {
-      "~/*": [
-        "./*"
-      ]
+      "~/*": ["./*"]
     }
   },
-  "include": [
-    ".",
-  ],
-  "exclude": [
-    "dist"
-  ]
+  "include": ["."],
+  "exclude": ["dist"]
 }
 
 ```
@@ -2633,6 +3131,16 @@ export default defineConfig({
       "~": resolve(__dirname, "./"),
     },
   },
+  css: {
+    modules: {
+      exportGlobals: true,
+    },
+    preprocessorOptions: {
+      scss: {
+        api: "modern",
+      },
+    },
+  },
 });
 
 ```
@@ -2652,49 +3160,46 @@ export default defineConfig({
   "version": "0.1.1",
   "description": "",
   "type": "module",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
   },
+  "sideEffects": false,
   "scripts": {
+    "install_and_build": "npm i && npm run build",
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
-    "classnames": "^2.5.1",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "@atomic-design/di": "*",
+    "@atomic-design/types": "*"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@atomic-design/di": "*",
-    "@atomic-design/design-tokens": "*",
-    "@atomic-design/atoms-base": "*",
-    "@eslint/js": "^9.23.0",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
     "codools": "^0.2.17",
-    "eslint": "^9.23.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-prettier": "^5.2.5",
-    "eslint-plugin-react": "^7.37.4",
-    "globals": "^16.0.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0",
-    "vite": "^6.2.4",
-    "vite-plugin-dts": "^4.5.3"
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   }
 }
 
@@ -2703,13 +3208,10 @@ export default defineConfig({
 ## packages/molecules-base/src/index.ts
 
 ```typescript
-import { MoleculesContext } from "./types";
-import { Link } from "./molecules/Link";
+import { Link } from "~/molecules/Link";
 import { Button } from "~/molecules/Button";
 
-export type * from "./types";
-
-export const moleculesContext: Pick<MoleculesContext, "molecules"> = {
+export const moleculesContext = {
     molecules: {
         Link,
         Button,
@@ -2721,103 +3223,31 @@ export const moleculesContext: Pick<MoleculesContext, "molecules"> = {
 ## packages/molecules-base/src/molecules/Button.tsx
 
 ```typescript
-import { WithDeps } from "@atomic-design/di";
-import { ButtonAtomContext } from "@atomic-design/atoms-base";
-import { ButtonMoleculeProps } from "~/types";
 import { memo } from "react";
+import { WithDeps } from "@atomic-design/di";
+import { Molecules, Atoms } from "@atomic-design/types";
 
-export const Button = memo(function(props: ButtonMoleculeProps & WithDeps<ButtonAtomContext>) {
+export const Button = memo(function Button(props: Molecules.MoleculeProps<"Button"> & WithDeps<Atoms.AtomContext<"Button">>) {
     const { deps, ...otherProps } = props;
     const { atoms: { Button } } = deps;
     return <Button {...otherProps} />
 });
-
-Button.displayName = "ButtonMolecule";
 
 ```
 
 ## packages/molecules-base/src/molecules/Link.tsx
 
 ```typescript
-import { WithDeps } from "@atomic-design/di";
-import { LinkAtomContext } from "@atomic-design/atoms-base";
-import { LinkMoleculeProps, UseIsActiveLinkContext } from "~/types";
+import type { WithDeps } from "@atomic-design/di";
 import { memo } from "react";
+import type { Molecules, MoleculesHooks, Atoms } from "@atomic-design/types";
 
-export const Link = memo(function(props: LinkMoleculeProps & WithDeps<UseIsActiveLinkContext & LinkAtomContext>) {
+export const Link = memo(function Link(props: Molecules.MoleculeProps<"Link"> & WithDeps<Atoms.AtomContext<"Link"> & MoleculesHooks.MoleculeHooksContext<"useLinkProps">>) {
     const { href, deps, active, ...otherProps } = props;
-    const { atoms: { Link }, moleculesHelpers: { useIsActiveLink } } = deps;
-    const isActive = useIsActiveLink(href);
-    return <Link {...otherProps} href={href} active={active !== undefined ? active : isActive} />
+    const { atoms: { Link }, moleculesHooks: { useLinkProps } } = deps;
+    const linkProps = useLinkProps(href);
+    return <Link {...otherProps} {...linkProps} />
 });
-
-Link.displayName = "LinkMolecule";
-
-```
-
-## packages/molecules-base/src/types.ts
-
-```typescript
-import type { OneMoleculeContext, OneMoleculeHelperContext } from "@atomic-design/di";
-import type { LinkAtomProps, LinkAtomContext, ButtonAtomContext, ButtonAtomProps } from "@atomic-design/atoms-base";
-
-export type MoleculesContext = LinkMoleculeContext & ButtonMoleculeContext;
-
-export type LinkMoleculeContext = OneMoleculeContext<"Link", LinkAtomContext & UseIsActiveLinkContext, LinkMoleculeProps>;
-export type UseIsActiveLinkContext = OneMoleculeHelperContext<"useIsActiveLink", [string | undefined], boolean>;
-export type LinkMoleculeProps = LinkAtomProps;
-
-export type ButtonMoleculeContext = OneMoleculeContext<"Button", ButtonAtomContext, ButtonMoleculeProps>;
-export type ButtonMoleculeProps = ButtonAtomProps;
-
-//
-// export interface InteractiveProps {
-//     readonly disabled?: boolean;
-//     readonly active?: boolean;
-//     readonly focus?: boolean;
-// }
-//
-// type Colors = "Primary" | "Secondary" | "Accent" | "Success" | "Danger" | "Warning" | "Info";
-//
-// export interface ColorsProps {
-//     readonly color?: Colors;
-// }
-//
-// type Sizes = "small" | "medium" | "large";
-//
-// export interface SizeProps {
-//     readonly size?: Sizes;
-// }
-//
-// type InputTypes = "input" | "textarea" | "boolean";
-//
-// export interface InputTypeProps {
-//     readonly inputType?: InputTypes;
-// }
-//
-// export interface EditAndReadProps {
-//     readonly read?: boolean;
-//     readonly editInRead?: boolean;
-//     readonly canEditInRead?: boolean;
-// }
-//
-// export interface Container {
-//     readonly children: ReactNode;
-// }
-//
-// export interface ManyPartsContainer extends Container {
-//     readonly icon?: ReactNode;
-//     readonly before?: ReactNode;
-//     readonly after?: ReactNode;
-// }
-//
-// export interface InputContainer extends Container {
-//     readonly label?: ReactNode;
-//     readonly before?: ReactNode;
-//     readonly after?: ReactNode;
-// }
-
-
 
 ```
 
@@ -2840,34 +3270,19 @@ export default {
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "module": "ESNext",
     "noEmit": true,
     "moduleResolution": "Bundler",
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
-    "types": [
-      "vite/client",
-      "vike-react",
-      "vite-plugin-vercel/types"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",
-    "jsxImportSource": "react",
     "paths": {
-      "~/*": [
-        "./src/*"
-      ]
+      "~/*": ["./src/*"]
     }
   },
-  "include": [
-    "src",
-  ]
+  "include": ["src"]
 }
 
 ```
@@ -2915,10 +3330,210 @@ export default defineConfig({
 
 ```
 
+## packages/store-react-context/package.json
+
+```json
+{
+  "name": "@atomic-design/store-react-context",
+  "version": "0.1.1",
+  "description": "",
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "install_and_build": "npm i && npm run build",
+    "build": "vite build",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21",
+    "@atomic-design/types": "*"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "codools": "^0.2.17",
+    "typescript": "^5.8.2",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  }
+}
+
+```
+
+## packages/store-react-context/src/index.ts
+
+```typescript
+import { useSpace, SpaceForm } from "~/store/spaceContext";
+import { ValueProvider, useValueText, useValue } from "~/store/valueContext";
+
+export const storeContext = {
+    storeHooks: {
+        useSpace,
+        useValue,
+        useValueText
+    },
+    storeComponents: {
+        SpaceForm,
+        ValueProvider
+    }
+};
+
+```
+
+## packages/store-react-context/src/store/spaceContext.tsx
+
+```typescript
+import { ReactNode, createContext, useMemo, useContext } from "react";
+import { Store } from "@atomic-design/types";
+
+const SpaceContext = createContext<Store.SpaceValue>({ space: '', paths: [], type: "FORM_ROOT" });
+
+export const SpaceForm = ({ space, children }: { space: string; children: ReactNode }) => (
+    <SpaceContext.Provider
+        value={useMemo(
+            () => ({ space, paths: [], type: "FORM_ROOT" }),
+            [space]
+        )}
+    >
+        {children}
+    </SpaceContext.Provider>
+);
+
+export const useSpace: Store.StoreHook<"useSpace"> = () => useContext(SpaceContext);
+
+```
+
+## packages/store-react-context/src/store/valueContext.tsx
+
+```typescript
+import { ReactNode, createContext, useMemo, useContext } from "react";
+import { Store } from "@atomic-design/types";
+import { get } from "lodash-es";
+
+const ValueContext = createContext<Record<string, { value: unknown, meta: unknown }>>({});
+
+export interface ValueProviderProps {
+    name: string;
+    value: unknown;
+    meta?: unknown;
+    children: ReactNode;
+}
+
+export const ValueProvider = ({ name, value, meta, children }: ValueProviderProps) => {
+    const parent = useContext(ValueContext);
+    const newValue = useMemo(() => ({
+        ...parent,
+        [name]: { ...parent[name], value, meta }
+    }), [parent, name, value]);
+    return <ValueContext.Provider value={newValue} >
+        {children}
+    </ValueContext.Provider>
+};
+
+export const useValue: Store.StoreHook<"useValue"> = (space, path) => {
+    return get(useContext(ValueContext), [space,'value',path].filter(Boolean).join('.')) as unknown;
+}
+
+export const useValueText: Store.StoreHook<"useValueText"> = (space, path, emptyValue) => {
+    return (useValue(space, path) as string | undefined) ?? emptyValue;
+}
+
+```
+
+## packages/store-react-context/tsconfig.json
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "module": "ESNext",
+    "noEmit": true,
+    "moduleResolution": "Bundler",
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "jsx": "react-jsx",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}
+
+```
+
+## packages/store-react-context/vite.config.ts
+
+```typescript
+import { resolve } from "path";
+import { defineConfig } from "vite";
+import dts from 'vite-plugin-dts'
+
+export default defineConfig({
+    resolve: {
+        alias: {
+            "~": resolve(__dirname, "./src"),
+        },
+    },
+    plugins: [
+        dts({ rollupTypes: false,  insertTypesEntry: true }),
+    ],
+    build: {
+        lib: {
+            entry: resolve(__dirname, 'src/index.ts'),
+            name: 'StoreReactContext',
+            fileName: 'index',
+        },
+        rollupOptions: {
+            external: [
+                'react',
+                'react-dom',
+                'react/jsx-runtime',
+                'react/jsx-dev-runtime',
+                'lodash-es',
+            ],
+            output: {
+                globals: {
+                    react: 'React',
+                    'lodash-es': 'LodashES',
+                    'react-dom': 'ReactDOM',
+                    'react/jsx-runtime': 'React',
+                    'react/jsx-dev-runtime': 'React'
+                }
+            }
+        }
+    }
+});
+
+```
+
 ## packages/styles-base/index.scss
 
 ```scss
 @forward "src/helpers";
+@forward "@atomic-design/design-tokens";
 
 ```
 
@@ -2930,58 +3545,43 @@ export default defineConfig({
   "version": "0.1.1",
   "description": "",
   "type": "module",
-  "files": [
-    "dist/",
-    "index.scss"
-  ],
+  "files": ["dist/", "index.scss"],
   "style": "dist/index.css",
   "sass": "index.scss",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.umd.cjs"
     },
     "./index.css": "./dist/index.css"
   },
   "scripts": {
-    "dev": "vite dev",
+    "install_and_build": "npm i && npm run build",
     "build:scss": "vite build --mode scss",
-    "build": "npm run build:scss && vite build",
+    "build": "npm run build:scss && npm run test && vite build",
     "preview": "vite preview",
+    "test": "tsc --project tsconfig.test.json",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@atomic-design/design-tokens": "*",
-    "@vite-plugin-vercel/vike": "^9.0.4",
-    "@vitejs/plugin-react": "^4.3.4",
-    "classnames": "^2.5.1",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-markdown": "^10.1.0"
+    "@atomic-design/types": "*",
+    "@atomic-design/design-tokens": "*"
   },
   "devDependencies": {
-    "@atomic-design/di": "*",
-    "@eslint/js": "^9.23.0",
     "@types/node": "^22.14.0",
-    "@types/react": "^19.0.12",
-    "@types/react-dom": "^19.0.4",
     "codools": "^0.2.17",
-    "eslint": "^9.23.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-prettier": "^5.2.5",
-    "eslint-plugin-react": "^7.37.4",
-    "globals": "^16.0.0",
     "prettier": "^3.5.3",
-    "sass": "^1.86.3",
+    "sass-embedded": "^1.89.2",
     "typed-scss-modules": "^8.1.1",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0",
-    "vite": "^6.2.4",
+    "vite": "^6.3.5",
     "vite-plugin-dts": "^4.5.3",
-    "vite-plugin-sass-dts": "^1.3.31"
+    "vite-plugin-pretty-module-classnames": "^1.4.1"
   }
 }
 
@@ -3018,19 +3618,28 @@ import input from "./styles/input.module.scss";
 import header from "./styles/header.module.scss";
 import footer from "./styles/footer.module.scss";
 import separator from "./styles/separator.module.scss";
-import { StylesContext } from "./types";
+import card from "./styles/card.module.scss";
+import table from "./styles/table.module.scss";
+import td from "./styles/td.module.scss";
+import th from "./styles/th.module.scss";
+import color from "./styles/color.module.scss";
+import section from "./styles/section.module.scss";
 
-export type * from "./types";
-
-export const stylesContext: StylesContext = {
+export const stylesContext = {
     styles: {
         link,
         button,
         input,
         footer,
         header,
-        separator
-    },
+        separator,
+        card,
+        table,
+        td,
+        th,
+        color,
+        section,
+    }
 };
 
 ```
@@ -3038,8 +3647,25 @@ export const stylesContext: StylesContext = {
 ## packages/styles-base/src/styles/button.module.scss
 
 ```scss
+@use "~/helpers" as helpers;
+@use "sass:map";
+
 .container {
-  /* */
+  .icon, .before, .content, .after, .disabled, .focus, .sizeSmall, .sizeMedium, .sizeLarge {
+    /* */
+  }
+
+  @include helpers.colors-classes() using($colors) {
+    color: map.get($colors, 500);
+
+    &:hover {
+      color: map.get($colors, 600);
+    }
+
+    &:active, &.active {
+      color: map.get($colors, 700);
+    }
+  }
 }
 
 ```
@@ -3047,18 +3673,107 @@ export const stylesContext: StylesContext = {
 ## packages/styles-base/src/styles/button.module.scss.d.ts
 
 ```typescript
-declare const classNames: {
-  readonly container: "container";
-};
-export = classNames;
 
+    declare const classNames: {
+      readonly container: "button__container_c81fc";
+      readonly icon: "button__icon_7a0e9";
+      readonly before: "button__before_1723b";
+      readonly content: "button__content_cf708";
+      readonly after: "button__after_6e403";
+      readonly disabled: "button__disabled_b3564";
+      readonly focus: "button__focus_f50b6";
+      readonly sizeSmall: "button__sizeSmall_b6a9a";
+      readonly sizeMedium: "button__sizeMedium_5b55d";
+      readonly sizeLarge: "button__sizeLarge_2bad8";
+      readonly colorPrimary: "button__color-primary_61a40";
+      readonly active: "button__active_ea8e8";
+      readonly colorSecondary: "button__color-secondary_c7c79";
+      readonly colorAccent: "button__color-accent_51d84";
+      readonly colorSuccess: "button__color-success_eb0cd";
+      readonly colorDanger: "button__color-danger_35f94";
+      readonly colorWarning: "button__color-warning_eca27";
+      readonly colorInfo: "button__color-info_85c1e";
+    };
+    export = classNames;
+                        
+```
+
+## packages/styles-base/src/styles/card.module.scss
+
+```scss
+@use "@atomic-design/design-tokens" as tokens;
+@use "../helpers" as helpers;
+@use "sass:map";
+
+.container {
+  .thumbnail, .before, .content, .after, .sizeSmall, .sizeMedium, .sizeLarge {
+    /* */
+  }
+
+  border: solid tokens.$border-md;
+  border-radius: tokens.$radius-md;
+  @include helpers.colors-classes() using($colors) {
+    border-color: map.get($colors, 500);
+  }
+}
+
+```
+
+## packages/styles-base/src/styles/card.module.scss.d.ts
+
+```typescript
+
+    declare const classNames: {
+      readonly container: "card__container_51624";
+      readonly thumbnail: "card__thumbnail_ab2c5";
+      readonly before: "card__before_3731b";
+      readonly content: "card__content_6e47f";
+      readonly after: "card__after_295fb";
+      readonly sizeSmall: "card__sizeSmall_467a6";
+      readonly sizeMedium: "card__sizeMedium_162e5";
+      readonly sizeLarge: "card__sizeLarge_ada7b";
+      readonly colorPrimary: "card__color-primary_fec73";
+      readonly colorSecondary: "card__color-secondary_fe478";
+      readonly colorAccent: "card__color-accent_8959a";
+      readonly colorSuccess: "card__color-success_56f58";
+      readonly colorDanger: "card__color-danger_38479";
+      readonly colorWarning: "card__color-warning_fdd29";
+      readonly colorInfo: "card__color-info_ae9ce";
+    };
+    export = classNames;
+                        
+```
+
+## packages/styles-base/src/styles/color.module.scss
+
+```scss
+@use "@atomic-design/design-tokens" as tokens;
+
+.container {
+  width: tokens.$fontSize-subtitle-1;
+  height: tokens.$fontSize-subtitle-1;
+}
+
+```
+
+## packages/styles-base/src/styles/color.module.scss.d.ts
+
+```typescript
+
+    declare const classNames: {
+      readonly container: "color__container_39634";
+    };
+    export = classNames;
+                        
 ```
 
 ## packages/styles-base/src/styles/footer.module.scss
 
 ```scss
 .container {
-  /* */
+  .icon, .before, .content, .after {
+    /*   */
+  }
 }
 
 ```
@@ -3066,18 +3781,25 @@ export = classNames;
 ## packages/styles-base/src/styles/footer.module.scss.d.ts
 
 ```typescript
-declare const classNames: {
-  readonly container: "container";
-};
-export = classNames;
 
+    declare const classNames: {
+      readonly container: "footer__container_28a24";
+      readonly icon: "footer__icon_f6fec";
+      readonly before: "footer__before_22c9a";
+      readonly content: "footer__content_0b9e7";
+      readonly after: "footer__after_8c1bd";
+    };
+    export = classNames;
+                        
 ```
 
 ## packages/styles-base/src/styles/header.module.scss
 
 ```scss
 .container {
-  /* */
+  .icon, .before, .content, .after {
+    /*   */
+  }
 }
 
 ```
@@ -3085,18 +3807,36 @@ export = classNames;
 ## packages/styles-base/src/styles/header.module.scss.d.ts
 
 ```typescript
-declare const classNames: {
-  readonly container: "container";
-};
-export = classNames;
 
+    declare const classNames: {
+      readonly container: "header__container_69153";
+      readonly icon: "header__icon_e5c9e";
+      readonly before: "header__before_21ad7";
+      readonly content: "header__content_cc0b1";
+      readonly after: "header__after_72659";
+    };
+    export = classNames;
+                        
 ```
 
 ## packages/styles-base/src/styles/input.module.scss
 
 ```scss
+@use "~/helpers" as helpers;
+@use "sass:map";
+
 .container {
-  /* */
+  .label, .before, .content, .after,
+  .disabled, .active, .focus,
+  .sizeSmall, .sizeMedium, .sizeLarge,
+  .typeBoolean, .typeTextarea,
+  .read, .editInRead, .canEditInRead {
+    /*   */
+  }
+
+  @include helpers.colors-classes() using($colors) {
+    /*   */
+  }
 }
 
 ```
@@ -3104,11 +3844,34 @@ export = classNames;
 ## packages/styles-base/src/styles/input.module.scss.d.ts
 
 ```typescript
-declare const classNames: {
-  readonly container: "container";
-};
-export = classNames;
 
+    declare const classNames: {
+      readonly container: "input__container_65104";
+      readonly label: "input__label_03f8f";
+      readonly before: "input__before_a122e";
+      readonly content: "input__content_5ab98";
+      readonly after: "input__after_0079d";
+      readonly disabled: "input__disabled_e7364";
+      readonly active: "input__active_b005a";
+      readonly focus: "input__focus_308ac";
+      readonly sizeSmall: "input__sizeSmall_08314";
+      readonly sizeMedium: "input__sizeMedium_e2d87";
+      readonly sizeLarge: "input__sizeLarge_b5527";
+      readonly typeBoolean: "input__typeBoolean_3d254";
+      readonly typeTextarea: "input__typeTextarea_b28c8";
+      readonly read: "input__read_be628";
+      readonly editInRead: "input__editInRead_13b31";
+      readonly canEditInRead: "input__canEditInRead_10dcf";
+      readonly colorPrimary: "input__color-primary_5d04e";
+      readonly colorSecondary: "input__color-secondary_2eeed";
+      readonly colorAccent: "input__color-accent_1f98f";
+      readonly colorSuccess: "input__color-success_95639";
+      readonly colorDanger: "input__color-danger_8f6ae";
+      readonly colorWarning: "input__color-warning_9bb49";
+      readonly colorInfo: "input__color-info_1eb4b";
+    };
+    export = classNames;
+                        
 ```
 
 ## packages/styles-base/src/styles/link.module.scss
@@ -3118,6 +3881,12 @@ export = classNames;
 @use "sass:map";
 
 .container {
+  .icon, .before, .content, .after,
+  .disabled, .focus,
+  .sizeSmall, .sizeMedium, .sizeLarge {
+    /* */
+  }
+
   @include helpers.colors-classes() using($colors) {
     color: map.get($colors, 500);
 
@@ -3136,19 +3905,73 @@ export = classNames;
 ## packages/styles-base/src/styles/link.module.scss.d.ts
 
 ```typescript
-declare const classNames: {
-  readonly container: "container";
-  readonly colorPrimary: "colorPrimary";
-  readonly active: "active";
-  readonly colorSecondary: "colorSecondary";
-  readonly colorAccent: "colorAccent";
-  readonly colorSuccess: "colorSuccess";
-  readonly colorDanger: "colorDanger";
-  readonly colorWarning: "colorWarning";
-  readonly colorInfo: "colorInfo";
-};
-export = classNames;
 
+    declare const classNames: {
+      readonly container: "link__container_17dfe";
+      readonly icon: "link__icon_bc073";
+      readonly before: "link__before_4579c";
+      readonly content: "link__content_8bac0";
+      readonly after: "link__after_0f1e9";
+      readonly disabled: "link__disabled_748d9";
+      readonly focus: "link__focus_c503a";
+      readonly sizeSmall: "link__sizeSmall_57a28";
+      readonly sizeMedium: "link__sizeMedium_b8223";
+      readonly sizeLarge: "link__sizeLarge_d08f9";
+      readonly colorPrimary: "link__color-primary_16200";
+      readonly active: "link__active_356f6";
+      readonly colorSecondary: "link__color-secondary_96ee7";
+      readonly colorAccent: "link__color-accent_4e701";
+      readonly colorSuccess: "link__color-success_daca1";
+      readonly colorDanger: "link__color-danger_8c8ce";
+      readonly colorWarning: "link__color-warning_e2a6a";
+      readonly colorInfo: "link__color-info_a410e";
+    };
+    export = classNames;
+                        
+```
+
+## packages/styles-base/src/styles/section.module.scss
+
+```scss
+@use "@atomic-design/design-tokens" as tokens;
+@use "../helpers" as helpers;
+@use "sass:map";
+
+.container {
+  .icon, .caption, .subcaption, .content, .sizeSmall, .sizeMedium, .sizeLarge {
+    /* */
+  }
+
+  @include helpers.colors-classes() using($colors) {
+    color: map.get($colors, 500);
+  }
+}
+
+```
+
+## packages/styles-base/src/styles/section.module.scss.d.ts
+
+```typescript
+
+    declare const classNames: {
+      readonly container: "section__container_8e953";
+      readonly icon: "section__icon_dc49e";
+      readonly caption: "section__caption_23769";
+      readonly subcaption: "section__subcaption_9054d";
+      readonly content: "section__content_a59d6";
+      readonly sizeSmall: "section__sizeSmall_39fcd";
+      readonly sizeMedium: "section__sizeMedium_db71b";
+      readonly sizeLarge: "section__sizeLarge_41389";
+      readonly colorPrimary: "section__color-primary_b07e1";
+      readonly colorSecondary: "section__color-secondary_ae95c";
+      readonly colorAccent: "section__color-accent_03fbb";
+      readonly colorSuccess: "section__color-success_9ee7d";
+      readonly colorDanger: "section__color-danger_e954d";
+      readonly colorWarning: "section__color-warning_d108d";
+      readonly colorInfo: "section__color-info_e2923";
+    };
+    export = classNames;
+                        
 ```
 
 ## packages/styles-base/src/styles/separator.module.scss
@@ -3163,42 +3986,114 @@ export = classNames;
 ## packages/styles-base/src/styles/separator.module.scss.d.ts
 
 ```typescript
-declare const classNames: {
-  readonly container: "container";
-};
-export = classNames;
+
+    declare const classNames: {
+      readonly container: "separator__container_94639";
+    };
+    export = classNames;
+                        
+```
+
+## packages/styles-base/src/styles/table.module.scss
+
+```scss
+@use "~/helpers" as helpers;
+@use "sass:map";
+
+.table {
+  .sizeSmall, .sizeMedium, .sizeLarge {
+    /* */
+  }
+  @include helpers.colors-classes() using($colors) {
+    /* */
+  }
+}
 
 ```
 
-## packages/styles-base/src/types.ts
+## packages/styles-base/src/styles/table.module.scss.d.ts
 
 ```typescript
-import { ClassNames, OneStyleContext } from "@atomic-design/di";
 
-export type StylesContext =
-    LinkStyles
-    & ButtonStyles
-    & InputStyles
-    & HeaderStyles
-    & FooterStyles
-    & SeparatorStyles;
+    declare const classNames: {
+      readonly table: "table__table_4e23a";
+      readonly sizeSmall: "table__sizeSmall_bc372";
+      readonly sizeMedium: "table__sizeMedium_bbc83";
+      readonly sizeLarge: "table__sizeLarge_e3ceb";
+      readonly colorPrimary: "table__color-primary_df995";
+      readonly colorSecondary: "table__color-secondary_54ea1";
+      readonly colorAccent: "table__color-accent_c0e15";
+      readonly colorSuccess: "table__color-success_32ae2";
+      readonly colorDanger: "table__color-danger_d0c5f";
+      readonly colorWarning: "table__color-warning_7c4bf";
+      readonly colorInfo: "table__color-info_3aef0";
+    };
+    export = classNames;
+                        
+```
 
-export type LinkStyles = OneStyleContext<"link", ManyPartsContainer & Interactive & WithColors & WithSize>;
-export type ButtonStyles = OneStyleContext<"button", ManyPartsContainer & Interactive & WithColors & WithSize>;
-export type InputStyles = OneStyleContext<"input", InputContainer & Interactive & WithColors & WithSize & InputType & EditAndRead>;
-export type HeaderStyles = OneStyleContext<"header", ManyPartsContainer>;
-export type FooterStyles = OneStyleContext<"footer", ManyPartsContainer>;
-export type SeparatorStyles = OneStyleContext<"separator", Container>;
+## packages/styles-base/src/styles/td.module.scss
 
-export type Interactive = ClassNames<"disabled" | "active" | "focus">;
-export type WithColors = ClassNames<"colorPrimary" | "colorSecondary" | "colorAccent" | "colorSuccess" | "colorDanger" | "colorWarning" | "colorInfo">;
-export type WithSize = ClassNames<"sizeSmall" | "sizeMedium" | "sizeLarge">;
-export type Container = ClassNames<"container">;
-export type ManyPartsContainer = Container & ClassNames<"icon" | "before" | "content" | "after">;
-export type InputType = ClassNames<"typeBoolean" | "typeTextarea">;
-export type InputContainer = Container & ClassNames<"label" | "before" | "content" | "after">;
-export type EditAndRead = ClassNames<"read" | "editInRead" | "canEditInRead">;
+```scss
+@use "~/helpers" as helpers;
+@use "sass:map";
 
+.td {
+  @include helpers.colors-classes() using($colors) {
+    /* */
+  }
+}
+
+```
+
+## packages/styles-base/src/styles/td.module.scss.d.ts
+
+```typescript
+
+    declare const classNames: {
+      readonly td: "td__td_aa986";
+      readonly colorPrimary: "td__color-primary_662c2";
+      readonly colorSecondary: "td__color-secondary_a6164";
+      readonly colorAccent: "td__color-accent_92db6";
+      readonly colorSuccess: "td__color-success_dc066";
+      readonly colorDanger: "td__color-danger_dacfd";
+      readonly colorWarning: "td__color-warning_aa7be";
+      readonly colorInfo: "td__color-info_d51f9";
+    };
+    export = classNames;
+                        
+```
+
+## packages/styles-base/src/styles/th.module.scss
+
+```scss
+@use "~/helpers" as helpers;
+@use "sass:map";
+
+.th {
+  @include helpers.colors-classes() using($colors) {
+    /* */
+  }
+}
+
+```
+
+## packages/styles-base/src/styles/th.module.scss.d.ts
+
+```typescript
+
+    declare const classNames: {
+      readonly th: "th__th_ff332";
+      readonly colorPrimary: "th__color-primary_e4eca";
+      readonly colorSecondary: "th__color-secondary_32aa8";
+      readonly colorAccent: "th__color-accent_6bf44";
+      readonly colorSuccess: "th__color-success_af9f0";
+      readonly colorDanger: "th__color-danger_9faa5";
+      readonly colorWarning: "th__color-warning_95085";
+      readonly colorInfo: "th__color-info_40af7";
+    };
+    export = classNames;
+                        
 ```
 
 ## packages/styles-base/stylelint.config.js
@@ -3212,6 +4107,31 @@ export default {
 
 ```
 
+## packages/styles-base/test-dts/index.test-d.ts
+
+```typescript
+import { stylesContext } from "~/index";
+import { type Styles } from "@atomic-design/types";
+
+export type DeepRequired<T> = {
+    [K in keyof T]: Required<DeepRequired<T[K]>>
+}
+
+stylesContext as DeepRequired<Styles.StyleContext<"link">>;
+stylesContext as DeepRequired<Styles.StyleContext<"button">>;
+stylesContext as DeepRequired<Styles.StyleContext<"input">>;
+stylesContext as DeepRequired<Styles.StyleContext<"footer">>;
+stylesContext as DeepRequired<Styles.StyleContext<"header">>;
+stylesContext as DeepRequired<Styles.StyleContext<"separator">>;
+stylesContext as DeepRequired<Styles.StyleContext<"card">>;
+stylesContext as DeepRequired<Styles.StyleContext<"table">>;
+stylesContext as DeepRequired<Styles.StyleContext<"td">>;
+stylesContext as DeepRequired<Styles.StyleContext<"th">>;
+stylesContext as DeepRequired<Styles.StyleContext<"color">>;
+stylesContext as DeepRequired<Styles.StyleContext<"section">>;
+
+```
+
 ## packages/styles-base/tsconfig.json
 
 ```json
@@ -3220,35 +4140,31 @@ export default {
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "module": "ESNext",
     "noEmit": true,
     "moduleResolution": "Bundler",
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
-    "types": [
-      "vite/client",
-      "vike-react",
-      "vite-plugin-vercel/types"
-    ],
-    "jsx": "preserve",
-    "jsxImportSource": "react",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "paths": {
-      "~/*": [
-        "./src/*"
-      ]
-    },
-    "plugins": [{"name": "ts-css-modules-vite-plugin", "root": "./"}]
+      "~/*": ["./src/*"]
+    }
   },
-  "include": [
-    "src",
-  ]
+  "include": ["src"]
+}
+
+```
+
+## packages/styles-base/tsconfig.test.json
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "include": ["test-dts/index.test-d.ts"],
+  "compilerOptions": {
+    "noEmit": true
+  }
 }
 
 ```
@@ -3257,56 +4173,308 @@ export default {
 
 ```typescript
 import { resolve } from "path";
-import { defineConfig } from "vite";
+import { writeFileSync } from 'node:fs'
+import { CSSModulesOptions, defineConfig } from "vite";
 import dts from 'vite-plugin-dts'
-import sassDts from "vite-plugin-sass-dts";
-import Plugin from "vite-plugin-sass-dts";
+import PrettyModuleClassnames from "vite-plugin-pretty-module-classnames";
 
+const srcDir = resolve(__dirname, "./src");
 
 export default defineConfig(({ mode }) => {
-    const isScssMode = mode === 'scss'
+    const isScssMode = mode === 'scss' || mode === 'development';
     if (isScssMode) {
-        console.log("Mode 'Generate SCSS'");
+        console.log("'Generate dts for  SCSS' enabled");
     }
 
     return {
         resolve: {
             alias: {
-                "~": resolve(__dirname, "./src"),
+                "~": srcDir,
             },
         },
         plugins: [
-            isScssMode
-                ? sassDts({ enabledMode: ['scss'] as string[] as Parameters<typeof Plugin>[0]["enabledMode"]})
-                : dts({ rollupTypes: false })
+            PrettyModuleClassnames(),
+            !isScssMode && dts({ rollupTypes: false })
         ],
-        build: isScssMode
-            ? {
-                lib: {
-                    entry: resolve(__dirname, 'src/index.ts'),
-                    name:  'AtomsSCSS',
-                    fileName: 'index'
-                }
+        build: {
+            lib: {
+                entry: resolve(__dirname, 'src/index.ts'),
+                name:  'AtomsSCSS',
+                fileName: 'index'
             }
-            : {
-                lib: {
-                    entry: resolve(__dirname, 'src/index.ts'),
-                    name:  'AtomsSCSS',
-                    fileName: 'index'
-                }
-            },
+        },
         css: {
             modules: {
                 localsConvention: "camelCaseOnly",
+                exportGlobals: true,
+                getJSON: isScssMode ? getDts : null
             },
             preprocessorOptions: {
                 scss: {
-                    loadPaths: ['node_modules', '../../node_modules'],
                     api: "modern",
                 },
             },
         },
     }
 })
+
+const getDts: CSSModulesOptions["getJSON"] = (cssFileName, json, outputFileName) => {
+    if (/\.scss$/.test(outputFileName)) {
+        const dts = `
+    declare const classNames: {
+      ${Object.entries(json).map(([name, value]) => `readonly ${name}: "${value}";`).join(`
+      `)}
+    };
+    export = classNames;
+                        `
+        writeFileSync(outputFileName.replace(/\.scss$/, '.scss.d.ts'), dts);
+    }
+};
+
+```
+
+## packages/types/package.json
+
+```json
+{
+  "name": "@atomic-design/types",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": {
+      "types": "./dist/styles.d.ts"
+    },
+    "./atoms": {
+      "types": "./dist/atoms.d.ts"
+    },
+    "./molecules": {
+      "types": "./dist/molecules.d.ts"
+    },
+    "./moleculesHooks": {
+      "types": "./dist/moleculesHooks.d.ts"
+    },
+    "./store": {
+      "types": "./dist/store.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "install_and_build": "npm i && npm run build",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@atomic-design/di": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}
+
+```
+
+## packages/types/src/atoms.ts
+
+```typescript
+import { ComponentProps, type ComponentType } from "react";
+import { OneContextItem, ReactNodes } from "@atomic-design/di";
+
+export type AtomContext<T extends keyof AtomsProps> = OneContextItem<"atoms", T, ComponentType<AtomProps<T>>>;
+
+export interface AtomsProps {
+    Link: ManyPartsContainer & InteractiveProps & ColorsProps & SizeProps & ComponentProps<"a">;
+    Button: ManyPartsContainer & InteractiveProps & ColorsProps & SizeProps & ComponentProps<"button">;
+    Card: CardPartsContainer & ColorsProps & SizeProps & ComponentProps<"div">;
+    Section: SectionPartsContainer & ColorsProps & SizeProps & ComponentProps<"div">;
+    Table: ComponentProps<"table">;
+    TD: ComponentProps<"td">;
+    TH: ComponentProps<"th">;
+    Color: ComponentProps<"div"> & { color?: string };
+}
+export type AtomProps<T extends keyof AtomsProps> = AtomsProps[T];
+
+export interface InteractiveProps {
+    readonly disabled?: boolean;
+    readonly active?: boolean;
+    readonly focus?: boolean;
+}
+
+export type Colors = "Primary" | "Secondary" | "Accent" | "Success" | "Danger" | "Warning" | "Info";
+
+export interface ColorsProps {
+    readonly color?: Colors;
+}
+
+export type Sizes = "small" | "medium" | "large";
+
+export interface SizeProps {
+    readonly size?: Sizes;
+}
+
+export type InputTypes = "input" | "textarea" | "boolean";
+
+export interface InputTypeProps {
+    readonly inputType?: InputTypes;
+}
+
+export interface EditAndReadProps {
+    readonly read?: boolean;
+    readonly editInRead?: boolean;
+    readonly canEditInRead?: boolean;
+}
+
+export type Container = ReactNodes<"children">;
+
+
+export type ManyPartsContainer = ReactNodes<"icon" | "before" |"after" >;
+export type CardPartsContainer = ReactNodes<"thumbnail" | "before" |"after" >;
+export type SectionPartsContainer = ReactNodes<"icon" | "caption" | "subcaption" >;
+export type InputContainer = ReactNodes<"label" | "before" |"after" >;
+
+```
+
+## packages/types/src/index.ts
+
+```typescript
+export * as Store from "./store";
+export * as Styles from "./styles";
+export * as Atoms from "./atoms";
+export * as Molecules from "./molecules";
+export * as MoleculesHooks from "./moleculesHooks";
+
+```
+
+## packages/types/src/molecules.ts
+
+```typescript
+import type { OneContextItem } from "@atomic-design/di";
+import { AtomProps } from "./atoms";
+import { ComponentType } from "react";
+
+export type MoleculeContext<T extends keyof MoleculesProps> = OneContextItem<"molecules", T, ComponentType<MoleculeProps<T>>>;
+
+export type MoleculeProps<T extends keyof MoleculesProps> = MoleculesProps[T];
+
+export interface MoleculesProps {
+    Link: AtomProps<"Link">;
+    Button: AtomProps<"Button">;
+    Card: AtomProps<"Card">;
+    Table: AtomProps<"Table">;
+    TD: AtomProps<"TD">;
+    TH: AtomProps<"TH">;
+}
+
+```
+
+## packages/types/src/moleculesHooks.ts
+
+```typescript
+import { OneContextItem } from "@atomic-design/di";
+import type { AtomProps } from "./atoms";
+
+export interface MoleculesHooks {
+    useLinkProps: (href: string | undefined) => AtomProps<"Link">;
+}
+
+export type MoleculesHook <T extends keyof MoleculesHooks> = MoleculesHooks[T];
+
+export type MoleculeHooksContext<T extends keyof MoleculesHooks> = OneContextItem<"moleculesHooks", T, MoleculesHooks[T]>;
+
+```
+
+## packages/types/src/store.ts
+
+```typescript
+import { OneContextItem } from "@atomic-design/di";
+
+export interface StoreHooks {
+    useSpace: () => SpaceValue;
+    useValue: (space: string | undefined, path: string | undefined) => unknown;
+    useValueText: (space: string | undefined, path: string | undefined, emptyValue?: string) => string | undefined;
+}
+export type StoreHook <T extends keyof StoreHooks> = StoreHooks[T];
+
+export type StoreHooksContext <T extends keyof StoreHooks> = OneContextItem<"storeHooks", T, StoreHooks[T]>;
+
+export interface SpaceValue {
+    type: SpaceType;
+    space: string;
+    paths: string[];
+}
+
+export const SpaceTypes = {
+    FORM_ROOT: "FORM_ROOT",
+    LIST_HEADER: "LIST_HEADER",
+    LIST_ROW: "LIST_ROW",
+    SUBLIST_HEADER: "SUBLIST_HEADER",
+    SUBLIST_ROW: "SUBLIST_ROW",
+    FORM_FILTER: "FORM_FILTER",
+    LIST_FOOTER: "LIST_FOOTER",
+} as const;
+
+export type SpaceType = typeof SpaceTypes[keyof typeof SpaceTypes];
+
+```
+
+## packages/types/src/styles.ts
+
+```typescript
+import { ClassNames, OneStyleContext } from "@atomic-design/di";
+
+export type Style <T extends keyof Styles> = Styles[T];
+
+export type StyleContext <T extends keyof Styles> = OneStyleContext<T, Style<T>>;
+
+export interface Styles {
+    link: ManyPartsContainer & Interactive & WithColors & WithSize;
+    button: ManyPartsContainer & Interactive & WithColors & WithSize;
+    input: InputContainer & Interactive & WithColors & WithSize & InputType & EditAndRead;
+    header: ManyPartsContainer;
+    footer: ManyPartsContainer;
+    separator: Container;
+    card: CardPartsContainer & WithColors & WithSize;
+    section: SectionPartsContainer & WithColors & WithSize;
+    table: Required<ClassNames<"table">> & WithColors & WithSize;
+    td: Required<ClassNames<"td">>;
+    th: Required<ClassNames<"th">>;
+    color: Container;
+}
+
+export type Interactive = ClassNames<"disabled" | "active" | "focus">;
+export type WithColors = ClassNames<"colorPrimary" | "colorSecondary" | "colorAccent" | "colorSuccess" | "colorDanger" | "colorWarning" | "colorInfo">;
+export type WithSize = ClassNames<"sizeSmall" | "sizeMedium" | "sizeLarge">;
+export type Container = Required<ClassNames<"container">>;
+export type ManyPartsContainer = Container & ClassNames<"icon" | "before" | "content" | "after">;
+export type CardPartsContainer = Container & ClassNames<"thumbnail" | "before" | "content" | "after">;
+export type SectionPartsContainer = Container & ClassNames<"icon" | "caption" | "subcaption" | "content">;
+export type InputType = ClassNames<"typeBoolean" | "typeTextarea">;
+export type InputContainer = Container & ClassNames<"label" | "before" | "content" | "after">;
+export type EditAndRead = ClassNames<"read" | "editInRead" | "canEditInRead">;
+
+```
+
+## packages/types/tsconfig.json
+
+```json
+{
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "moduleResolution": "bundler",
+    "outDir": "dist",
+    "declarationMap": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext",
+    "module": "ESNext"
+  },
+  "include": ["src"]
+}
 
 ```

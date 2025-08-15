@@ -1,12 +1,21 @@
 import { Link } from "./atoms/Link";
-import { AtomsContext } from "./types";
 import { Button } from "./atoms/Button";
+import { Card } from "./atoms/Card";
+import { Section } from "./atoms/Section";
+import { Table } from "./atoms/Table";
+import { TD } from "./atoms/TD";
+import { TH } from "./atoms/TH";
+import { Color } from "./atoms/Color";
 
-export type * from "./types";
-
-export const atomsContext: Pick<AtomsContext, "atoms"> = {
+export const atomsContext = {
     atoms: {
+        Card,
+        Section,
         Link,
         Button,
+        Table,
+        TD,
+        TH,
+        Color
     }
 };

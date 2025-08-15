@@ -8,8 +8,8 @@ const atomicContext = {
     styles: async () => blankDeps((await import("@atomic-design/styles-base")).stylesContext.styles),
     atoms: async () => extractComponentDeps((await import("@atomic-design/atoms-base")).atomsContext.atoms),
     molecules: async () => extractComponentDeps((await import("@atomic-design/molecules-base")).moleculesContext.molecules),
-    moleculesHelpers: () => blankDeps({
-        useIsActiveLink: (href?: string) => {
+    moleculeHooks: () => blankDeps({
+        useLinkProps: (href?: string) => {
             const pathname = usePathname() || '/'
             if (href === undefined) {
                 return false;

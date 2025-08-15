@@ -3,57 +3,42 @@
   "version": "0.1.1",
   "description": "",
   "type": "module",
-  "files": [
-    "dist/",
-    "index.scss"
-  ],
+  "files": ["dist/", "index.scss"],
   "style": "dist/index.css",
   "sass": "index.scss",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.umd.cjs"
     },
     "./index.css": "./dist/index.css"
   },
   "scripts": {
-    "dev": "vite dev",
+    "install_and_build": "npm i && npm run build",
     "build:scss": "vite build --mode scss",
-    "build": "npm run build:scss && vite build",
+    "build": "npm run build:scss && npm run test && vite build",
     "preview": "vite preview",
+    "test": "tsc --project tsconfig.test.json",
     "lint": "eslint ."
   },
   "dependencies": {
-    "@atomic-design/design-tokens": "*",
-    "@vite-plugin-vercel/vike": "^9.0.4",
-    "@vitejs/plugin-react": "^4.3.4",
-    "classnames": "^2.5.1",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-markdown": "^10.1.0"
+    "@atomic-design/types": "*",
+    "@atomic-design/design-tokens": "*"
   },
   "devDependencies": {
-    "@atomic-design/di": "*",
-    "@eslint/js": "^9.23.0",
     "@types/node": "^22.14.0",
-    "@types/react": "^19.0.12",
-    "@types/react-dom": "^19.0.4",
     "codools": "^0.2.17",
-    "eslint": "^9.23.0",
-    "eslint-config-prettier": "^10.1.1",
-    "eslint-plugin-prettier": "^5.2.5",
-    "eslint-plugin-react": "^7.37.4",
-    "globals": "^16.0.0",
     "prettier": "^3.5.3",
-    "sass": "^1.86.3",
+    "sass-embedded": "^1.89.2",
     "typed-scss-modules": "^8.1.1",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0",
-    "vite": "^6.2.4",
+    "vite": "^6.3.5",
     "vite-plugin-dts": "^4.5.3",
-    "vite-plugin-sass-dts": "^1.3.31"
+    "vite-plugin-pretty-module-classnames": "^1.4.1"
   }
 }

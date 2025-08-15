@@ -5,33 +5,32 @@ permissions:
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   release:
     if: github.event_name == 'workflow_dispatch' || !startsWith(github.event.head_commit.message, '[RELEASE]')
     runs-on: ubuntu-latest
+
     steps:
-      # Checkout the repository
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           persist-credentials: true
 
-      # Setup Node.js environment
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
 
-      # Install dependencies
-      - name: Install dependencies
+      - name: Install (root)
         run: npm i
 
-      # Filter changed paths
+      # -------------------------------
+      # Detect changed packages
+      # -------------------------------
       - name: Filter changed paths
         id: filter
         uses: dorny/paths-filter@v2
@@ -39,195 +38,150 @@ jobs:
           filters: |
             di:
               - 'packages/di/**'
-            designTokensSCSS:
+            types:
+              - 'packages/di/**'
+              - 'packages/types/**'
+            designTokens:
               - 'packages/design-tokens/**'
             stylesBase:
-              - 'packages/di/**'
-              - 'packages/design-tokens/**'
               - 'packages/styles-base/**'
+              - 'packages/design-tokens/**'
+              - 'packages/types/**'
             atomsBase:
-              - 'packages/di/**'
-              - 'packages/design-tokens/**'
-              - 'packages/styles-base/**'
               - 'packages/atoms-base/**'
+              - 'packages/design-tokens/**'
+              - 'packages/di/**'
+              - 'packages/types/**'
             moleculesBase:
-              - 'packages/di/**'
-              - 'packages/design-tokens/**'
-              - 'packages/styles-base/**'
-              - 'packages/atoms-base/**'
               - 'packages/molecules-base/**'
-            vikeExample:
               - 'packages/di/**'
-              - 'packages/design-tokens/**'
-              - 'packages/styles-base/**'
-              - 'packages/atoms-base/**'
-              - 'packages/molecules-base/**'
-              - 'packages/example_vike/**'
-            nextExample:
-              - 'packages/di/**'
-              - 'packages/design-tokens/**'
-              - 'packages/styles-base/**'
-              - 'packages/atoms-base/**'
-              - 'packages/molecules-base/**'
-              - 'packages/example_nextjs/**'
-      - name: di
+              - 'packages/types/**'
+
+      # -------------------------------
+      # STEP 1: patch versions
+      # -------------------------------
+      - name: patch versions
         run: |
           if [ "${{ steps.filter.outputs.di }}" = "true" ]; then
-            npm --workspace=packages/di run build
             npm --workspace=packages/di version patch --no-git-tag-version
-          else
-            npm --workspace=packages/di run build
           fi
-          NEW_DI_VERSION=$(node -p "require('./packages/di/package.json').version")
-          echo "DI_VERSION=$NEW_DI_VERSION" >> $GITHUB_ENV
-
-      - name: designTokensSCSS
-        run: |
-          if [ "${{ steps.filter.outputs.designTokensSCSS }}" = "true" ]; then
-            npm --workspace=packages/design-tokens run build
+          if [ "${{ steps.filter.outputs.types }}" = "true" ]; then
+            npm --workspace=packages/types version patch --no-git-tag-version
+          fi
+          if [ "${{ steps.filter.outputs.designTokens }}" = "true" ]; then
             npm --workspace=packages/design-tokens version patch --no-git-tag-version
-          else
-            npm --workspace=packages/design-tokens run build
           fi
-          NEW_DESIGN_TOKENS_SCSS_VERSION=$(node -p "require('./packages/design-tokens/package.json').version")
-          echo "DESIGN_TOKENS_SCSS_VERSION=$NEW_DESIGN_TOKENS_SCSS_VERSION" >> $GITHUB_ENV
-
-      - name: stylesBase
-        run: |
           if [ "${{ steps.filter.outputs.stylesBase }}" = "true" ]; then
-            npm --workspace=packages/styles-base install @atomic-design/di@$DI_VERSION
-            npm --workspace=packages/styles-base install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
-            npm --workspace=packages/styles-base run build
             npm --workspace=packages/styles-base version patch --no-git-tag-version
-          else
-            npm --workspace=packages/styles-base run build
           fi
-          NEW_STYLES_BASE_VERSION=$(node -p "require('./packages/styles-base/package.json').version")
-          echo "STYLES_BASE_VERSION=$NEW_STYLES_BASE_VERSION" >> $GITHUB_ENV
-
-      - name: atomsBase
-        run: |
           if [ "${{ steps.filter.outputs.atomsBase }}" = "true" ]; then
-            npm --workspace=packages/atoms-base install @atomic-design/di@$DI_VERSION
-            npm --workspace=packages/atoms-base install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
-            npm --workspace=packages/atoms-base install @atomic-design/styles-base@$STYLES_BASE_VERSION
-            npm --workspace=packages/atoms-base run build
             npm --workspace=packages/atoms-base version patch --no-git-tag-version
-          else
-            npm --workspace=packages/atoms-base run build
           fi
-          NEW_ATOMS_BASE_VERSION=$(node -p "require('./packages/atoms-base/package.json').version")
-          echo "ATOMS_BASE_VERSION=$NEW_ATOMS_BASE_VERSION" >> $GITHUB_ENV
-
-      - name: moleculesBase
-        run: |
           if [ "${{ steps.filter.outputs.moleculesBase }}" = "true" ]; then
-            npm --workspace=packages/molecules-base install @atomic-design/di@$DI_VERSION
-            npm --workspace=packages/molecules-base install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
-            npm --workspace=packages/molecules-base install @atomic-design/styles-base@$STYLES_BASE_VERSION
-            npm --workspace=packages/molecules-base install @atomic-design/atoms-base@$ATOMS_BASE_VERSION
-            npm --workspace=packages/molecules-base run build
             npm --workspace=packages/molecules-base version patch --no-git-tag-version
-          else
-            npm --workspace=packages/molecules-base run build
           fi
-          NEW_MOLECULES_BASE_VERSION=$(node -p "require('./packages/molecules-base/package.json').version")
-          echo "MOLECULES_BASE_VERSION=$NEW_MOLECULES_BASE_VERSION" >> $GITHUB_ENV
 
-      - name: vikeExample
+      # -------------------------------
+      # STEP 2: update versions in dependencies (no stars)
+      # -------------------------------
+      - name: update versions in dependencies
         run: |
-          if [ "${{ steps.filter.outputs.vikeExample }}" = "true" ]; then
-            npm --workspace=packages/example_vike install @atomic-design/di@$DI_VERSION
-            npm --workspace=packages/example_vike install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
-            npm --workspace=packages/example_vike install @atomic-design/styles-base@$STYLES_BASE_VERSION
-            npm --workspace=packages/example_vike install @atomic-design/atoms-base@$ATOMS_BASE_VERSION
-            npm --workspace=packages/example_vike install @atomic-design/molecules-base@$MOLECULES_BASE_VERSION
-            npm --workspace=packages/example_vike run build
-            npm --workspace=packages/example_vike version patch --no-git-tag-version
-          else
-            npm --workspace=packages/example_vike run build
-          fi
-          NEW_VIKE_EXAMPLE_VERSION=$(node -p "require('./packages/example_vike/package.json').version")
-          echo "VIKE_EXAMPLE_VERSION=$NEW_VIKE_EXAMPLE_VERSION" >> $GITHUB_ENV
+          echo "TYPES_VERSION=$(node -p "require('./packages/types/package.json').version")" >> $GITHUB_ENV
+          echo "DI_VERSION=$(node -p "require('./packages/di/package.json').version")" >> $GITHUB_ENV
+          echo "DESIGN_TOKENS_VERSION=$(node -p "require('./packages/design-tokens/package.json').version")" >> $GITHUB_ENV
+          echo "STYLES_BASE_VERSION=$(node -p "require('./packages/styles-base/package.json').version")" >> $GITHUB_ENV
+          echo "ATOMS_BASE_VERSION=$(node -p "require('./packages/atoms-base/package.json').version")" >> $GITHUB_ENV
+          echo "MOLECULES_BASE_VERSION=$(node -p "require('./packages/molecules-base/package.json').version")" >> $GITHUB_ENV
 
-      - name: nextExample
-        run: |
-          if [ "${{ steps.filter.outputs.nextExample }}" = "true" ]; then
-            npm --workspace=packages/example_nextjs install @atomic-design/di@$DI_VERSION
-            npm --workspace=packages/example_nextjs install @atomic-design/design-tokens@$DESIGN_TOKENS_SCSS_VERSION
-            npm --workspace=packages/example_nextjs install @atomic-design/styles-base@$STYLES_BASE_VERSION
-            npm --workspace=packages/example_nextjs install @atomic-design/atoms-base@$ATOMS_BASE_VERSION
-            npm --workspace=packages/example_nextjs install @atomic-design/molecules-base@$MOLECULES_BASE_VERSION
-            npm --workspace=packages/example_nextjs run build
-            npm --workspace=packages/example_nextjs version patch --no-git-tag-version
-          else
-            npm --workspace=packages/example_nextjs run build
-          fi
-          NEW_NEXT_EXAMPLE_VERSION=$(node -p "require('./packages/example_nextjs/package.json').version")
-          echo "NEXT_EXAMPLE_VERSION=$NEW_NEXT_EXAMPLE_VERSION" >> $GITHUB_ENV
+          # types -> di (dev)
+          npm pkg set "devDependencies.@atomic-design/di=^$DI_VERSION"                     --workspace=packages/types
 
-      # Always bump version for the root module
-      - name: Bump version for root
-        run: npm version patch --no-git-tag-version
+          # styles-base -> types, design-tokens
+          npm pkg set "dependencies.@atomic-design/types=^$TYPES_VERSION"                  --workspace=packages/styles-base
+          npm pkg set "dependencies.@atomic-design/design-tokens=^$DESIGN_TOKENS_VERSION" --workspace=packages/styles-base
 
-      # Commit all changes in a single commit with a message containing the new version
-      - name: Commit changes
-        if: > 
+          # atoms-base -> di, types, design-tokens
+          npm pkg set "dependencies.@atomic-design/di=^$DI_VERSION"                        --workspace=packages/atoms-base
+          npm pkg set "dependencies.@atomic-design/types=^$TYPES_VERSION"                  --workspace=packages/atoms-base
+          npm pkg set "dependencies.@atomic-design/design-tokens=^$DESIGN_TOKENS_VERSION"  --workspace=packages/atoms-base
+
+          # molecules-base -> di, types, design-tokens (dev)
+          npm pkg set "devDependencies.@atomic-design/di=^$DI_VERSION"                     --workspace=packages/molecules-base
+          npm pkg set "devDependencies.@atomic-design/types=^$TYPES_VERSION"               --workspace=packages/molecules-base
+
+          # store-react-context -> di, types (dev)
+          npm pkg set "devDependencies.@atomic-design/di=^$DI_VERSION"                     --workspace=packages/store-react-context
+          npm pkg set "devDependencies.@atomic-design/types=^$TYPES_VERSION"               --workspace=packages/store-react-context
+
+      # -------------------------------
+      # STEP 3: build all workspaces in root order
+      # -------------------------------
+      - name: build all workspaces (ordered)
+        run: npm run install_and_build --workspaces --if-present
+
+      # Bump root only if changed
+      - name: Bump root version
+        if: |
+          steps.filter.outputs.types == 'true' ||
           steps.filter.outputs.di == 'true' ||
-          steps.filter.outputs.designTokensSCSS == 'true' ||
+          steps.filter.outputs.designTokens == 'true' ||
           steps.filter.outputs.stylesBase == 'true' ||
           steps.filter.outputs.atomsBase == 'true' ||
-          steps.filter.outputs.moleculesBase == 'true' ||
-          steps.filter.outputs.vikeExample == 'true' ||
-          steps.filter.outputs.nextExample == 'true'
+          steps.filter.outputs.moleculesBase == 'true'
+        run: npm version patch --no-git-tag-version
+
+      - name: Commit changes
+        if: |
+          steps.filter.outputs.types == 'true' ||
+          steps.filter.outputs.di == 'true' ||
+          steps.filter.outputs.designTokens == 'true' ||
+          steps.filter.outputs.stylesBase == 'true' ||
+          steps.filter.outputs.atomsBase == 'true' ||
+          steps.filter.outputs.moleculesBase == 'true'
         run: |
           git config user.name "${{ secrets.GIT_USER_NAME }}"
-          git pull
+          git config user.email "${{ secrets.GIT_USER_EMAIL || 'actions@github.com' }}"
           git status
           NEW_VERSION=$(node -p "require('./package.json').version")
           git add .
           git commit -m "[RELEASE] ${NEW_VERSION}"
           git push
 
-      # Publish changed workspaces (the root module is not published)
+      # -------------------------------
+      # Publish (only changed), in dependency order
+      # -------------------------------
       - name: Publish di
         if: steps.filter.outputs.di == 'true'
         run: npm publish --workspace=packages/di --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
-#
-#      - name: Publish designTokensSCSS
-#        if: steps.filter.outputs.designTokensSCSS == 'true'
-#        run: npm publish --workspace=packages/design-tokens --access public
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
-#
-#      - name: Publish stylesBase
-#        if: steps.filter.outputs.stylesBase == 'true'
-#        run: npm publish --workspace=packages/styles-base --access public
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
-#
-#      - name: Publish atomsBase
-#        if: steps.filter.outputs.atomsBase == 'true'
-#        run: npm publish --workspace=packages/atoms-base --access public
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
-#
-#      - name: Publish moleculesBase
-#        if: steps.filter.outputs.moleculesBase == 'true'
-#        run: npm publish --workspace=packages/molecules-base --access public
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
-#
-#      - name: Publish vikeExample
-#        if: steps.filter.outputs.vikeExample == 'true'
-#        run: npm publish --workspace=packages/example_vike --access public
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
-#
-#      - name: Publish nextExample
-#        if: steps.filter.outputs.nextExample == 'true'
-#        run: npm publish --workspace=packages/example_nextjs --access public
-#        env:
-#          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN  }}
+          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN }}
+
+      - name: Publish types
+        if: steps.filter.outputs.types == 'true'
+        run: npm publish --workspace=packages/types --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN }}
+
+      - name: Publish design-tokens
+        if: steps.filter.outputs.designTokens == 'true'
+        run: npm publish --workspace=packages/design-tokens --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN }}
+
+      - name: Publish styles-base
+        if: steps.filter.outputs.stylesBase == 'true'
+        run: npm publish --workspace=packages/styles-base --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN }}
+
+      - name: Publish atoms-base
+        if: steps.filter.outputs.atomsBase == 'true'
+        run: npm publish --workspace=packages/atoms-base --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN }}
+
+      - name: Publish molecules-base
+        if: steps.filter.outputs.moleculesBase == 'true'
+        run: npm publish --workspace=packages/molecules-base --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.ATOMIC_NPM_TOKEN }}

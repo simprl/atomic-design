@@ -1,0 +1,43 @@
+{
+  "name": "@atomic-design/store-react-context",
+  "version": "0.1.1",
+  "description": "",
+  "type": "module",
+  "files": ["dist"],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "install_and_build": "npm i && npm run build",
+    "build": "vite build",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21",
+    "@atomic-design/types": "*"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^22.14.0",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "codools": "^0.2.17",
+    "typescript": "^5.8.2",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  }
+}

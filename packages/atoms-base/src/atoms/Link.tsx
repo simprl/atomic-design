@@ -1,9 +1,8 @@
-import { WithDeps } from "@atomic-design/di";
-import { LinkStyles } from "@atomic-design/styles-base";
-import { LinkAtomProps } from "~/types";
+import type { WithDeps } from "@atomic-design/di";
 import { classNameByColor, classNameByInteractive } from "~/helpers/classname";
+import type { Atoms, Styles } from "@atomic-design/types";
 
-export function Link(props: LinkAtomProps & WithDeps<LinkStyles>) {
+export function Link(props: Atoms.AtomProps<"Link"> & WithDeps<Styles.StyleContext<"link">>) {
     const { children, icon, before, after, href, color = "Primary", deps } = props;
     const classNames = deps.styles.link;
     const containerClassNames = [

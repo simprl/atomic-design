@@ -1,7 +1,6 @@
-import { InteractiveProps, LinkAtomProps } from "~/types";
-import { Interactive, WithColors } from "@atomic-design/styles-base";
+import { Atoms, Styles } from "@atomic-design/types";
 
-export function classNameByColor(color: LinkAtomProps["color"], classNames: WithColors): string | undefined {
+export function classNameByColor(color: Atoms.ColorsProps["color"], classNames: Styles.WithColors): string | undefined {
     switch (color) {
         case "Primary": return classNames.colorPrimary;
         case "Secondary": return classNames.colorSecondary;
@@ -13,7 +12,7 @@ export function classNameByColor(color: LinkAtomProps["color"], classNames: With
     }
 }
 
-export function classNameByInteractive(props: InteractiveProps, classNames: Interactive): (string | undefined)[] {
+export function classNameByInteractive(props: Atoms.InteractiveProps, classNames: Styles.Interactive): (string | undefined)[] {
     const result = [];
     if (props.active) result.push(classNames.active);
     if (props.disabled) result.push(classNames.disabled);

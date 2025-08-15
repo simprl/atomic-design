@@ -1,3 +1,16 @@
+@use "~/helpers" as helpers;
+@use "sass:map";
+
 .container {
-  /* */
+  .label, .before, .content, .after,
+  .disabled, .active, .focus,
+  .sizeSmall, .sizeMedium, .sizeLarge,
+  .typeBoolean, .typeTextarea,
+  .read, .editInRead, .canEditInRead {
+    /*   */
+  }
+
+  @include helpers.colors-classes() using($colors) {
+    /*   */
+  }
 }

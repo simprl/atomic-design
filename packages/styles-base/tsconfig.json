@@ -3,33 +3,16 @@
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "module": "ESNext",
     "noEmit": true,
     "moduleResolution": "Bundler",
     "target": "ES2022",
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
-    "types": [
-      "vite/client",
-      "vike-react",
-      "vite-plugin-vercel/types"
-    ],
-    "jsx": "preserve",
-    "jsxImportSource": "react",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "paths": {
-      "~/*": [
-        "./src/*"
-      ]
-    },
-    "plugins": [{"name": "ts-css-modules-vite-plugin", "root": "./"}]
+      "~/*": ["./src/*"]
+    }
   },
-  "include": [
-    "src",
-  ]
+  "include": ["src"]
 }

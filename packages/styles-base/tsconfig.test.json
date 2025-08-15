@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["test-dts/index.test-d.ts"],
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

@@ -1,52 +1,58 @@
 import { resolve } from "path";
-import { defineConfig } from "vite";
+import { writeFileSync } from 'node:fs'
+import { CSSModulesOptions, defineConfig } from "vite";
 import dts from 'vite-plugin-dts'
-import sassDts from "vite-plugin-sass-dts";
-import Plugin from "vite-plugin-sass-dts";
+import PrettyModuleClassnames from "vite-plugin-pretty-module-classnames";
 
+const srcDir = resolve(__dirname, "./src");
 
 export default defineConfig(({ mode }) => {
-    const isScssMode = mode === 'scss'
+    const isScssMode = mode === 'scss' || mode === 'development';
     if (isScssMode) {
-        console.log("Mode 'Generate SCSS'");
+        console.log("'Generate dts for  SCSS' enabled");
     }
 
     return {
         resolve: {
             alias: {
-                "~": resolve(__dirname, "./src"),
+                "~": srcDir,
             },
         },
         plugins: [
-            isScssMode
-                ? sassDts({ enabledMode: ['scss'] as string[] as Parameters<typeof Plugin>[0]["enabledMode"]})
-                : dts({ rollupTypes: false })
+            PrettyModuleClassnames(),
+            !isScssMode && dts({ rollupTypes: false })
         ],
-        build: isScssMode
-            ? {
-                lib: {
-                    entry: resolve(__dirname, 'src/index.ts'),
-                    name:  'AtomsSCSS',
-                    fileName: 'index'
-                }
+        build: {
+            lib: {
+                entry: resolve(__dirname, 'src/index.ts'),
+                name:  'AtomsSCSS',
+                fileName: 'index'
             }
-            : {
-                lib: {
-                    entry: resolve(__dirname, 'src/index.ts'),
-                    name:  'AtomsSCSS',
-                    fileName: 'index'
-                }
-            },
+        },
         css: {
             modules: {
                 localsConvention: "camelCaseOnly",
+                exportGlobals: true,
+                getJSON: isScssMode ? getDts : null
             },
             preprocessorOptions: {
                 scss: {
-                    loadPaths: ['node_modules', '../../node_modules'],
                     api: "modern",
                 },
             },
         },
     }
 })
+
+const getDts: CSSModulesOptions["getJSON"] = (cssFileName, json, outputFileName) => {
+    if (/\.scss$/.test(outputFileName)) {
+        const dts = `
+    declare const classNames: {
+      ${Object.entries(json).map(([name, value]) => `readonly ${name}: "${value}";`).join(`
+      `)}
+    };
+    export = classNames;
+                        `
+        writeFileSync(outputFileName.replace(/\.scss$/, '.scss.d.ts'), dts);
+    }
+};

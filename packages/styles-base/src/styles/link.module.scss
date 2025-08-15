@@ -2,6 +2,12 @@
 @use "sass:map";
 
 .container {
+  .icon, .before, .content, .after,
+  .disabled, .focus,
+  .sizeSmall, .sizeMedium, .sizeLarge {
+    /* */
+  }
+
   @include helpers.colors-classes() using($colors) {
     color: map.get($colors, 500);
 
