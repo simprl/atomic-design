@@ -1,6 +1,6 @@
 {
   "name": "@atomic-design/di",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Lightweight, type-safe dependency inversion utilities for Atomic Design architectures in React",
   "keywords": [
     "atomic-design",

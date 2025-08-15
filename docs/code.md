@@ -10,7 +10,7 @@ If something is unclear or needs clarification, feel free to ask me.
 ```json
 {
   "name": "@atomic-design/all",
-  "version": "1.0.28",
+  "version": "1.0.29",
   "private": true,
   "workspaces": [
     "packages/di",
@@ -58,7 +58,7 @@ If something is unclear or needs clarification, feel free to ask me.
 ```json
 {
   "name": "@atomic-design/atoms-base",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "type": "module",
   "files": ["dist", "index.scss", "src/helpers"],
@@ -960,7 +960,7 @@ export default {
 ```json
 {
   "name": "@atomic-design/di",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Lightweight, type-safe dependency inversion utilities for Atomic Design architectures in React",
   "keywords": [
     "atomic-design",
@@ -1476,7 +1476,7 @@ export default nextConfig;
 ```json
 {
   "name": "example_nextjs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "install_and_build": "npm i && npm run build",
@@ -1486,22 +1486,23 @@ export default nextConfig;
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "@atomic-design/atoms-base": "^0.1.2",
+    "@atomic-design/design-tokens": "^0.1.2",
+    "@atomic-design/di": "^0.1.2",
+    "@atomic-design/molecules-base": "^0.1.2",
+    "@atomic-design/styles-base": "^0.1.2",
     "next": "15.3.2",
-    "@atomic-design/styles-base": "*",
-    "@atomic-design/atoms-base": "*",
-    "@atomic-design/molecules-base": "*",
-    "@atomic-design/di": "*"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "@eslint/eslintrc": "^3"
+    "typescript": "^5"
   }
 }
 
@@ -2682,7 +2683,8 @@ export const localeDefault = locales[0]
     "sass-embedded": "^1.89.2"
   },
   "type": "module",
-  "private": true
+  "private": true,
+  "version": "0.0.1"
 }
 
 ```
@@ -3157,7 +3159,7 @@ export default defineConfig({
 ```json
 {
   "name": "@atomic-design/molecules-base",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "type": "module",
   "files": ["dist"],
@@ -3542,7 +3544,7 @@ export default defineConfig({
 ```json
 {
   "name": "@atomic-design/styles-base",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "type": "module",
   "files": ["dist/", "index.scss"],
