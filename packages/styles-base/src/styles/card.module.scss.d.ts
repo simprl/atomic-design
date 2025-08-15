@@ -1,20 +1,20 @@
 
     declare const classNames: {
-      readonly container: "card__container_51624";
-      readonly thumbnail: "card__thumbnail_ab2c5";
-      readonly before: "card__before_3731b";
-      readonly content: "card__content_6e47f";
-      readonly after: "card__after_295fb";
-      readonly sizeSmall: "card__sizeSmall_467a6";
-      readonly sizeMedium: "card__sizeMedium_162e5";
-      readonly sizeLarge: "card__sizeLarge_ada7b";
-      readonly colorPrimary: "card__color-primary_fec73";
-      readonly colorSecondary: "card__color-secondary_fe478";
-      readonly colorAccent: "card__color-accent_8959a";
-      readonly colorSuccess: "card__color-success_56f58";
-      readonly colorDanger: "card__color-danger_38479";
-      readonly colorWarning: "card__color-warning_fdd29";
-      readonly colorInfo: "card__color-info_ae9ce";
+      readonly container: "card__container_1b74f";
+      readonly thumbnail: "card__thumbnail_51508";
+      readonly before: "card__before_eeb38";
+      readonly content: "card__content_d1cb2";
+      readonly after: "card__after_16795";
+      readonly sizeSmall: "card__sizeSmall_0fb56";
+      readonly sizeMedium: "card__sizeMedium_4a975";
+      readonly sizeLarge: "card__sizeLarge_d2063";
+      readonly colorPrimary: "card__color-primary_ed72e";
+      readonly colorSecondary: "card__color-secondary_66b2a";
+      readonly colorAccent: "card__color-accent_fa7d2";
+      readonly colorSuccess: "card__color-success_273b4";
+      readonly colorDanger: "card__color-danger_371d1";
+      readonly colorWarning: "card__color-warning_3e30e";
+      readonly colorInfo: "card__color-info_a7ed5";
     };
     export = classNames;
                         

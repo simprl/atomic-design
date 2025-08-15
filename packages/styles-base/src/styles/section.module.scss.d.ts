@@ -1,20 +1,20 @@
 
     declare const classNames: {
-      readonly container: "section__container_8e953";
-      readonly icon: "section__icon_dc49e";
-      readonly caption: "section__caption_23769";
-      readonly subcaption: "section__subcaption_9054d";
-      readonly content: "section__content_a59d6";
-      readonly sizeSmall: "section__sizeSmall_39fcd";
-      readonly sizeMedium: "section__sizeMedium_db71b";
-      readonly sizeLarge: "section__sizeLarge_41389";
-      readonly colorPrimary: "section__color-primary_b07e1";
-      readonly colorSecondary: "section__color-secondary_ae95c";
-      readonly colorAccent: "section__color-accent_03fbb";
-      readonly colorSuccess: "section__color-success_9ee7d";
-      readonly colorDanger: "section__color-danger_e954d";
-      readonly colorWarning: "section__color-warning_d108d";
-      readonly colorInfo: "section__color-info_e2923";
+      readonly container: "section__container_dd7f1";
+      readonly icon: "section__icon_3fa4a";
+      readonly caption: "section__caption_025d0";
+      readonly subcaption: "section__subcaption_0d288";
+      readonly content: "section__content_46581";
+      readonly sizeSmall: "section__sizeSmall_14829";
+      readonly sizeMedium: "section__sizeMedium_9e7e4";
+      readonly sizeLarge: "section__sizeLarge_75e1d";
+      readonly colorPrimary: "section__color-primary_de050";
+      readonly colorSecondary: "section__color-secondary_d8a58";
+      readonly colorAccent: "section__color-accent_9ea48";
+      readonly colorSuccess: "section__color-success_bb050";
+      readonly colorDanger: "section__color-danger_c1f39";
+      readonly colorWarning: "section__color-warning_b7654";
+      readonly colorInfo: "section__color-info_29da6";
     };
     export = classNames;
                         
