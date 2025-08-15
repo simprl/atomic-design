@@ -92,33 +92,33 @@ jobs:
       # -------------------------------
       - name: update versions in dependencies
         run: |
-          echo "TYPES_VERSION=$(node -p 'require("./packages/types/package.json").version')" >> $GITHUB_ENV
-          echo "DI_VERSION=$(node -p 'require("./packages/di/package.json").version')" >> $GITHUB_ENV
-          echo "DESIGN_TOKENS_VERSION=$(node -p 'require("./packages/design-tokens/package.json").version')" >> $GITHUB_ENV
-          echo "STYLES_BASE_VERSION=$(node -p 'require("./packages/styles-base/package.json").version')" >> $GITHUB_ENV
-          echo "ATOMS_BASE_VERSION=$(node -p 'require("./packages/atoms-base/package.json").version')" >> $GITHUB_ENV
-          echo "MOLECULES_BASE_VERSION=$(node -p 'require("./packages/molecules-base/package.json").version')" >> $GITHUB_ENV
+          TYPES_VERSION=$(node -p 'require("./packages/types/package.json").version')
+          DI_VERSION=$(node -p 'require("./packages/di/package.json").version')
+          DESIGN_TOKENS_VERSION=$(node -p 'require("./packages/design-tokens/package.json").version')
+          STYLES_BASE_VERSION=$(node -p 'require("./packages/styles-base/package.json").version')
+          ATOMS_BASE_VERSION=$(node -p 'require("./packages/atoms-base/package.json").version')
+          MOLECULES_BASE_VERSION=$(node -p 'require("./packages/molecules-base/package.json").version')
 
           # types -> di (dev)
-          npm pkg set "dependencies.@atomic-design/di=^$DI_VERSION"                     --workspace=packages/types
+          npm pkg set "dependencies.@atomic-design/di=^${DI_VERSION}"                     --workspace=packages/types
           node -p "require('./packages/types/package.json').dependencies['@atomic-design/di']"
 
           # styles-base -> types, design-tokens
-          npm pkg set "dependencies.@atomic-design/types=^$TYPES_VERSION"                  --workspace=packages/styles-base
-          npm pkg set "dependencies.@atomic-design/design-tokens=^$DESIGN_TOKENS_VERSION" --workspace=packages/styles-base
+          npm pkg set "dependencies.@atomic-design/types=^${TYPES_VERSION}"                  --workspace=packages/styles-base
+          npm pkg set "dependencies.@atomic-design/design-tokens=^${DESIGN_TOKENS_VERSION}" --workspace=packages/styles-base
 
           # atoms-base -> di, types, design-tokens
-          npm pkg set "dependencies.@atomic-design/di=^$DI_VERSION"                        --workspace=packages/atoms-base
-          npm pkg set "dependencies.@atomic-design/types=^$TYPES_VERSION"                  --workspace=packages/atoms-base
-          npm pkg set "dependencies.@atomic-design/design-tokens=^$DESIGN_TOKENS_VERSION"  --workspace=packages/atoms-base
+          npm pkg set "dependencies.@atomic-design/di=^${DI_VERSION}"                        --workspace=packages/atoms-base
+          npm pkg set "dependencies.@atomic-design/types=^${TYPES_VERSION}"                  --workspace=packages/atoms-base
+          npm pkg set "dependencies.@atomic-design/design-tokens=^${DESIGN_TOKENS_VERSION}"  --workspace=packages/atoms-base
 
           # molecules-base -> di, types, design-tokens (dev)
-          npm pkg set "devDependencies.@atomic-design/di=^$DI_VERSION"                     --workspace=packages/molecules-base
-          npm pkg set "devDependencies.@atomic-design/types=^$TYPES_VERSION"               --workspace=packages/molecules-base
+          npm pkg set "dependencies.@atomic-design/di=^${DI_VERSION}"                     --workspace=packages/molecules-base
+          npm pkg set "dependencies.@atomic-design/types=^${TYPES_VERSION}"               --workspace=packages/molecules-base
 
           # store-react-context -> di, types (dev)
-          npm pkg set "devDependencies.@atomic-design/di=^$DI_VERSION"                     --workspace=packages/store-react-context
-          npm pkg set "devDependencies.@atomic-design/types=^$TYPES_VERSION"               --workspace=packages/store-react-context
+          npm pkg set "dependencies.@atomic-design/di=^${DI_VERSION}"                     --workspace=packages/store-react-context
+          npm pkg set "dependencies.@atomic-design/types=^${TYPES_VERSION}"               --workspace=packages/store-react-context
 
       # -------------------------------
       # STEP 3: build all workspaces in root order
